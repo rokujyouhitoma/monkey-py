@@ -20,6 +20,11 @@ RBRACE = '}'
 FUNCTION = 'FUNCTION'
 LET = 'LET'
 
+keywords = {
+    "fn": FUNCTION,
+    "let": LET,
+}
+
 @dataclass
 class TokenType:
     TypeName: str
@@ -29,3 +34,10 @@ class TokenType:
 class Token:
     Type: TokenType
     Literal: str
+
+
+def LookupIdent(ident: str) -> TokenType:
+    if ident in keywords:
+        tok = keywords.get(ident)
+        return tok
+    return IDENT
