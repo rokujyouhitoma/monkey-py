@@ -11,6 +11,8 @@ let add = fn(x, y) {
  x + y;
 };
 let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
 '''
         tests = [
             [token.LET, "let"],
@@ -49,6 +51,18 @@ let result = add(five, ten);
             [token.IDENT, "ten"],
             [token.RPAREN, ")"],
             [token.SEMICOLON, ";"],
+            [token.BANG, '!'],
+            [token.MINUS, '-'],
+            [token.SLASH, '/'],
+            [token.ASTERISK, '*'],
+            [token.INT, '5'],
+            [token.SEMICOLON, ";"],
+            [token.INT, '5'],
+            [token.LT, '<'],
+            [token.INT, '10'],
+            [token.GT, '>'],
+            [token.INT, '5'],
+            [token.SEMICOLON, ";"],
             [token.EOF, ''],
         ]
 
@@ -59,7 +73,7 @@ let result = add(five, ten);
             if tok.Type != tt[0]:
                 self.fail('tests[%d] - tokentype wrong. expected="%s", got="%s"' % (i, tt[0], tok.Type))
             if tok.Literal != tt[1]:
-                self.fail('tests[%d] - tokenliter wrong. expected="%s", got="%s"' % (i, tt[0], tok.Type))
+                self.fail('tests[%d] - tokenliteral wrong. expected="%s", got="%s"' % (i, tt[1], tok.Literal))
 
 
 if __name__ == '__main__':

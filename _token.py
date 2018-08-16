@@ -8,6 +8,13 @@ INT = 'INT'
 
 ASSIGN = '='
 PLUS = '+'
+MINUS = '-'
+BANG = '!'
+ASTERISK = '*'
+SLASH = '/'
+
+LT = '<'
+GT = '>'
 
 COMMA = ','
 SEMICOLON = ';'
@@ -21,8 +28,8 @@ FUNCTION = 'FUNCTION'
 LET = 'LET'
 
 keywords = {
-    "fn": FUNCTION,
-    "let": LET,
+    'fn': FUNCTION,
+    'let': LET,
 }
 
 @dataclass
@@ -38,6 +45,6 @@ class Token:
 
 def LookupIdent(ident: str) -> TokenType:
     if ident in keywords:
-        tok = keywords.get(ident)
-        return tok
+        token = keywords.get(ident)
+        return token
     return IDENT

@@ -22,6 +22,20 @@ class Lexer:
         self.skipWhitespace()
         if self.ch == '=':
             tok = self.newToken(token.ASSIGN, self.ch)
+        elif self.ch == '+':
+            tok = self.newToken(token.PLUS, self.ch)
+        elif self.ch == '-':
+            tok = self.newToken(token.MINUS, self.ch)
+        elif self.ch == '!':
+            tok = self.newToken(token.BANG, self.ch)
+        elif self.ch == '/':
+            tok = self.newToken(token.SLASH, self.ch)
+        elif self.ch == '*':
+            tok = self.newToken(token.ASTERISK, self.ch)
+        elif self.ch == '<':
+            tok = self.newToken(token.LT, self.ch)
+        elif self.ch == '>':
+            tok = self.newToken(token.GT, self.ch)
         elif self.ch == ';':
             tok = self.newToken(token.SEMICOLON, self.ch)
         elif self.ch == '(':
