@@ -4,6 +4,10 @@
 
 # Histories
 
+## 2018.08.17
+
+ - Refactoring: monkeyパッケージを作成、tests/ディレクトリの作成
+
 ## 2018.08.16
 
  - 1.4: P21-22 REPLの実装

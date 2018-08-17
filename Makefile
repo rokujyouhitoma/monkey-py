@@ -1,2 +1,5 @@
+repl:
+	python main.py
+
 test:
-	python test_*.py
+	PYTHONPATH=. python tests/test_*.py

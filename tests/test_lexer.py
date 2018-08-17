@@ -1,6 +1,6 @@
 import unittest
-import _token as token
-from _lexer import New
+from monkey import token
+from monkey.lexer import New
 
 
 class TestNextToken(unittest.TestCase):

@@ -1,5 +1,5 @@
-from _lexer import New
-import _token as token
+from monkey.lexer import New
+from monkey import token
 
 PROMPT = '>> '
 
