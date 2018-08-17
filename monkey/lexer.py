@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from monkey import token
+from monkey import _token as token
 
 
 @dataclass

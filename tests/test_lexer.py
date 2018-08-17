@@ -1,5 +1,5 @@
 import unittest
-from monkey import token
+from monkey import _token as token
 from monkey.lexer import New
 
 
