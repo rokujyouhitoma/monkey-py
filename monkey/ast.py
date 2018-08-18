@@ -49,6 +49,10 @@ class Identifier(Expression):
     Token: token.Token
     Value: str
 
+    @property
+    def Node(self) -> Node:
+        pass
+
     def expressionNode(self):
         pass
 
@@ -61,6 +65,10 @@ class LetStatement(Node, Statement):
     Token: token.Token
     Name: Identifier
     Value: Expression
+
+    @property
+    def Node(self) -> Node:
+        pass
 
     def statementNode(self):
         pass

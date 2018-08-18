@@ -9,6 +9,7 @@
 
 ## 2018.08.18
 
+ - 2.4: P35-P41 Parserの改善。letのサポート
  - Refactoring: tests cases
 
 ## 2018.08.17
