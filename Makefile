@@ -1,5 +1,7 @@
+PYTHON=python
+
 repl:
-	python main.py
+	@PYTHON main.py
 
 test:
-	python -m unittest discover tests/
+	@PYTHON -m unittest discover tests/
