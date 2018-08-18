@@ -1,6 +1,9 @@
 
-
  - oreilly-978-4-87311-822-2e.pdf
+
+# Requirements
+
+ - Python3.7.0
 
 # Histories
 
@@ -10,8 +13,8 @@
 
 ## 2018.08.17
 
- - 2.4: P29-35 parser.pyの実装
- - 2.3: P29-32 ast.pyの実装
+ - 2.4: P29-35 Parser(parser.py)の実装
+ - 2.3: P29-32 AST(ast.py)の実装
  - 2.2: P28-29
  - 2.1: P25-28
  - Refactoring: monkeyパッケージを作成、tests/ディレクトリの作成
