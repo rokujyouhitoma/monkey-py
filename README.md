@@ -4,6 +4,10 @@
 
 # Histories
 
+## 2018.08.18
+
+ - Refactoring: tests cases
+
 ## 2018.08.17
 
  - 2.4: P29-35 parser.pyの実装

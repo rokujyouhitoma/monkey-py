@@ -3,7 +3,7 @@ from monkey import _token as token
 from monkey.lexer import New
 
 
-class TestNextToken(unittest.TestCase):
+class TestLexer(unittest.TestCase):
     def test_next_token(self):
         input = '''let five = 5;
 let ten = 10;
@@ -110,7 +110,3 @@ if (5 < 10) {
                 self.fail('tests[%d] - tokentype wrong. expected="%s", got="%s"' % (i, tt[0], tok.Type))
             if tok.Literal != tt[1]:
                 self.fail('tests[%d] - tokenliteral wrong. expected="%s", got="%s"' % (i, tt[1], tok.Literal))
-
-
-if __name__ == '__main__':
-    unittest.main()
