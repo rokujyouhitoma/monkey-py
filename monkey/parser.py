@@ -1,27 +1,18 @@
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Optional
 
 from monkey import _token as token, ast, lexer
 
-T = TypeVar('T')
-
 
 @dataclass
-class Parser(Generic[T]):
-    lexer: lexer.Lexer
+class Parser():
+    lex: lexer.Lexer
     curToken: token.Token
     peekToken: token.Token
 
-    @classmethod
-    def New(cls, lexer: lexer.Lexer) -> T:
-        p = Parser(lexer=lexer, curToken=None, peekToken=None)
-        p.nextToken()
-        p.nextToken()
-        return p
-
-    def nextToken(self):
+    def nextToken(self) -> None:
         self.curToken = self.peekToken
-        self.peekToken = self.lexer.NextToken()
+        self.peekToken = self.lex.NextToken()
 
     def ParseProgram(self) -> ast.Program:
         program = ast.Program([])
@@ -34,14 +25,17 @@ class Parser(Generic[T]):
 
         return program
 
-    def parseStatement(self) -> ast.Statement:
+    def parseStatement(self) -> Optional[ast.Statement]:
         if self.curToken.Type == token.LET:
             return self.parseLetStatement()
         else:
             return None
 
-    def parseLetStatement(self) -> ast.LetStatement:
-        stmt = ast.LetStatement(Token=self.curToken, Name=None, Value=None)
+    def parseLetStatement(self) -> Optional[ast.LetStatement]:
+        stmt = ast.LetStatement(
+            Token=self.curToken,
+            Name=ast.Identifier(Token=self.curToken, Value=self.curToken.Literal),
+            Value=ast.Identifier(Token=self.curToken, Value=self.curToken.Literal))
 
         if not self.expectPeek(token.IDENT):
             return None
@@ -68,3 +62,13 @@ class Parser(Generic[T]):
             return True
         else:
             return False
+
+
+def New(lex: lexer.Lexer) -> Parser:
+    p: Parser = Parser(
+        lex=lex,
+        curToken=token.Token(Type=token.ILLEGAL, Literal='ILLEGAL'),
+        peekToken=token.Token(Type=token.ILLEGAL, Literal='ILLEGAL'))
+    p.nextToken()
+    p.nextToken()
+    return p

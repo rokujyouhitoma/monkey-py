@@ -1,7 +1,6 @@
 PYTHON=python
 
-#all: isort yapf flake8 mypy test
-all: isort yapf flake8 test
+all: isort yapf flake8 mypy test
 
 repl:
 	@PYTHON main.py

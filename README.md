@@ -16,6 +16,7 @@
 
 ## 2018.08.19
 
+ - annotate Type for mypy
  - Tools: isort, yapf, flake8, mypyを採用
 
 ## 2018.08.18

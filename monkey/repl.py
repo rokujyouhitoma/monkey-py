@@ -4,7 +4,7 @@ from monkey.lexer import New
 PROMPT = '>> '
 
 
-def Start():
+def Start() -> None:
     while True:
         line = input(PROMPT)
         lexer = New(line)

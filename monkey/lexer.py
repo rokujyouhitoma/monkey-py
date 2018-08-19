@@ -8,11 +8,11 @@ class Lexer:
     input: str
     position: int = 0
     readPosition: int = 0
-    ch: bytes = b''
+    ch: str = ''
 
     def readChar(self) -> None:
         if self.readPosition >= len(self.input):
-            self.ch = 0
+            self.ch = ''
         else:
             self.ch = self.input[self.readPosition]
         self.position = self.readPosition
@@ -26,7 +26,7 @@ class Lexer:
                 ch = self.ch
                 self.readChar()
                 literal = str(ch) + str(self.ch)
-                tok = token.Token(Type=token.EQ, Literal=literal)
+                tok = self.newToken(token.EQ, literal)
             else:
                 tok = self.newToken(token.ASSIGN, self.ch)
         elif self.ch == '+':
@@ -38,7 +38,7 @@ class Lexer:
                 ch = self.ch
                 self.readChar()
                 literal = str(ch) + str(self.ch)
-                tok = token.Token(Type=token.NOT_EQ, Literal=literal)
+                tok = self.newToken(token.NOT_EQ, literal)
             else:
                 tok = self.newToken(token.BANG, self.ch)
         elif self.ch == '/':
@@ -63,23 +63,23 @@ class Lexer:
             tok = self.newToken(token.LBRACE, self.ch)
         elif self.ch == '}':
             tok = self.newToken(token.RBRACE, self.ch)
-        elif self.ch == 0:
-            tok = token.Token(Type=token.EOF, Literal='')
+        elif self.ch == '':
+            tok = self.newToken(token.EOF, '')
         else:
             if self.isLetter(self.ch):
                 literal = self.readIdentifier()
-                tok = token.Token(Type=token.LookupIdent(literal), Literal=literal)
+                tok = self.newToken(token.LookupIdent(literal), literal)
                 return tok
             elif self.isDigit(self.ch):
-                tok = token.Token(Type=token.INT, Literal=self.readNumber())
+                tok = self.newToken(token.INT, self.readNumber())
                 return tok
             else:
                 tok = self.newToken(token.ILLEGAL, self.ch)
         self.readChar()
         return tok
 
-    def newToken(self, tokenType: token.TokenType, ch: bytes) -> token.Token:
-        return token.Token(Type=tokenType, Literal=str(ch))
+    def newToken(self, tokenType: token.TokenType, ch: str) -> token.Token:
+        return token.Token(Type=tokenType, Literal=ch)
 
     def readIdentifier(self) -> str:
         position = self.position
@@ -87,8 +87,8 @@ class Lexer:
             self.readChar()
         return self.input[position:self.position]
 
-    def isLetter(self, ch: bytes) -> bool:
-        return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or (ch == b'_')
+    def isLetter(self, ch: str) -> bool:
+        return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or (ch == '_')
 
     def skipWhitespace(self) -> None:
         while self.ch == ' ' or self.ch == '\t' or self.ch == '\n' or self.ch == '\r':
@@ -96,16 +96,16 @@ class Lexer:
 
     def readNumber(self) -> str:
         position = self.position
-        while self.ch != 0 and self.isDigit(self.ch):
+        while self.ch != '' and self.isDigit(self.ch):
             self.readChar()
         return self.input[position:self.position]
 
-    def isDigit(self, ch: bytes) -> bool:
+    def isDigit(self, ch: str) -> bool:
         return '0' <= ch and ch <= '9'
 
-    def peekChar(self) -> bytes:
+    def peekChar(self) -> str:
         if self.readPosition >= len(self.input):
-            return 0
+            return ''
         else:
             return self.input[self.readPosition]
 

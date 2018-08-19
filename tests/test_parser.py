@@ -1,7 +1,6 @@
 import unittest
 
-from monkey import ast, lexer
-from monkey.parser import Parser
+from monkey import ast, lexer, parser
 
 
 class TestParser(unittest.TestCase):
@@ -12,7 +11,7 @@ let y = 10;
 let foobar = 838383;
 '''
         lex = lexer.New(input)
-        p = Parser.New(lex)
+        p = parser.New(lex)
 
         program = p.ParseProgram()
         if program is None:
