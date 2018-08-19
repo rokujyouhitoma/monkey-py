@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Dict
 
 ILLEGAL = 'ILLEGAL'
 EOF = 'EOF'
@@ -35,7 +36,7 @@ IF = 'IF'
 ELSE = 'ELSE'
 RETURN = 'RETURN'
 
-keywords = {
+keywords: Dict[str, str] = {
     'fn': FUNCTION,
     'let': LET,
     'true': TRUE,
@@ -57,8 +58,8 @@ class Token:
     Literal: str
 
 
-def LookupIdent(ident: str) -> TokenType:
+def LookupIdent(ident: str) -> str:
     if ident in keywords:
-        token = keywords.get(ident)
+        token = keywords[ident]
         return token
     return IDENT

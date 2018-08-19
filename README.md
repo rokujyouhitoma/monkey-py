@@ -10,6 +10,7 @@
  - isort
  - yapf
  - flake8
+ - mypy
 
 # Histories
 

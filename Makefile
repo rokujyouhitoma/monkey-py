@@ -1,5 +1,6 @@
 PYTHON=python
 
+#all: isort yapf flake8 mypy test
 all: isort yapf flake8 test
 
 repl:
@@ -17,3 +18,5 @@ yapf:
 flake8:
 	flake8
 
+mypy:
+	mypy .
