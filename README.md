@@ -5,7 +5,15 @@
 
  - Python3.7.0
 
+# Tools
+
+ - isort
+
 # Histories
+
+## 2018.08.19
+
+ - Tools: isortを採用
 
 ## 2018.08.18
 

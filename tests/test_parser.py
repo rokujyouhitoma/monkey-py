@@ -1,6 +1,6 @@
 import unittest
-from monkey import lexer
-from monkey import ast
+
+from monkey import ast, lexer
 from monkey.parser import Parser
 
 

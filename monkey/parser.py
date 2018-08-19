@@ -1,10 +1,7 @@
 from dataclasses import dataclass
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
-from monkey import ast
-from monkey import lexer
-from monkey import _token as token
-
+from monkey import _token as token, ast, lexer
 
 T = TypeVar('T')
 

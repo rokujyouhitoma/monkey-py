@@ -1,5 +1,7 @@
 import getpass
+
 from monkey.repl import Start
+
 
 def main():
     user = getpass.getuser()
