@@ -45,6 +45,7 @@ keywords = {
     'return': RETURN,
 }
 
+
 @dataclass
 class TokenType:
     TypeName: str

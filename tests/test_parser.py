@@ -18,7 +18,8 @@ let foobar = 838383;
         if program is None:
             self.fail('ParseProgram() returned None')
         if len(program.Statements) != 3:
-            self.fail('program.Statements does not contain 3 statements. got=%s' % len(program.Statements))
+            self.fail('program.Statements does not contain 3 statements. got=%s'
+                      % len(program.Statements))
 
         tests = [
             ['x'],
@@ -42,11 +43,13 @@ def testLetStatement(s: ast.Statement, name: str) -> bool:
     print(letStmt)
 
     if letStmt.Name.Value != name:
-        self.fail('letStmt.Name.Value not \'%s\'. got=%s' % (name, letStmt.Name.Value))
+        self.fail('letStmt.Name.Value not \'%s\'. got=%s' %
+                  (name, letStmt.Name.Value))
         return False
 
     if letStmt.Name.TokenLiteral() != name:
-        self.fail('letStmt.Name.TokenLiteral() not \'%s\'. got=%s' % (name, letStmt.Name.TokenLiteral()))
+        self.fail('letStmt.Name.TokenLiteral() not \'%s\'. got=%s' %
+                  (name, letStmt.Name.TokenLiteral()))
         return False
 
     return True

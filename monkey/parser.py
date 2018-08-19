@@ -5,6 +5,7 @@ from monkey import _token as token, ast, lexer
 
 T = TypeVar('T')
 
+
 @dataclass
 class Parser(Generic[T]):
     l: lexer.Lexer
@@ -13,7 +14,7 @@ class Parser(Generic[T]):
 
     @classmethod
     def New(cls, l: lexer.Lexer) -> T:
-        p = Parser(l = l, curToken = None, peekToken = None)
+        p = Parser(l=l, curToken=None, peekToken=None)
         p.nextToken()
         p.nextToken()
         return p
@@ -40,12 +41,13 @@ class Parser(Generic[T]):
             return None
 
     def parseLetStatement(self) -> ast.LetStatement:
-        stmt = ast.LetStatement(Token = self.curToken, Name = None, Value = None)
+        stmt = ast.LetStatement(Token=self.curToken, Name=None, Value=None)
 
         if not self.expectPeek(token.IDENT):
             return None
 
-        stmt.Name = ast.Identifier(Token = self.curToken, Value = self.curToken.Literal)
+        stmt.Name = ast.Identifier(
+            Token=self.curToken, Value=self.curToken.Literal)
 
         if not self.expectPeek(token.ASSIGN):
             return None

@@ -8,12 +8,13 @@
 # Tools
 
  - isort
+ - yapf
 
 # Histories
 
 ## 2018.08.19
 
- - Tools: isortを採用
+ - Tools: isort, yapfを採用
 
 ## 2018.08.18
 
