@@ -16,7 +16,7 @@
 
 ## 2018.08.19
 
- - Tools: isort, yapf, flake8を採用
+ - Tools: isort, yapf, flake8, mypyを採用
 
 ## 2018.08.18
 
