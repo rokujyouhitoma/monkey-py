@@ -16,6 +16,7 @@
 
 ## 2018.08.19
 
+ - 2.4: P41-44 Parserのエラーメッセージを拡充
  - annotate Type for mypy
  - Tools: isort, yapf, flake8, mypyを採用
 

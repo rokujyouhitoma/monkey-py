@@ -14,6 +14,7 @@ let foobar = 838383;
         p = parser.New(lex)
 
         program = p.ParseProgram()
+        checkParserErrors(self, p)
         if program is None:
             self.fail('ParseProgram() returned None')
         if len(program.Statements) != 3:
@@ -51,3 +52,15 @@ def testLetStatement(self, s: ast.Statement, name: str) -> bool:
         return False
 
     return True
+
+
+def checkParserErrors(self, p: parser.Parser) -> None:
+    errors = p.Errors()
+    if len(errors) == 0:
+        return
+
+    messages = []
+    messages.append('parser has %s errors' % len(errors))
+    for msg in errors:
+         messages.append('parser error: %s' % msg)
+    self.fail(messages)

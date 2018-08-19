@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 from monkey import _token as token, ast, lexer
 
@@ -9,6 +9,7 @@ class Parser():
     lex: lexer.Lexer
     curToken: token.Token
     peekToken: token.Token
+    errors: List[str] = field(default_factory=list)
 
     def nextToken(self) -> None:
         self.curToken = self.peekToken
@@ -61,7 +62,15 @@ class Parser():
             self.nextToken()
             return True
         else:
+            self.peekError(t)
             return False
+
+    def Errors(self) -> List[str]:
+        return self.errors
+
+    def peekError(self, t: token.TokenType) -> None:
+        msg = 'expected next token to be %s, got %s instead' % (t, self.peekToken.Type)
+        self.errors.append(msg)
 
 
 def New(lex: lexer.Lexer) -> Parser:
