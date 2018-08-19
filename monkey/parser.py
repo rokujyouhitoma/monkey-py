@@ -8,20 +8,20 @@ T = TypeVar('T')
 
 @dataclass
 class Parser(Generic[T]):
-    l: lexer.Lexer
+    lexer: lexer.Lexer
     curToken: token.Token
     peekToken: token.Token
 
     @classmethod
-    def New(cls, l: lexer.Lexer) -> T:
-        p = Parser(l=l, curToken=None, peekToken=None)
+    def New(cls, lexer: lexer.Lexer) -> T:
+        p = Parser(lexer=lexer, curToken=None, peekToken=None)
         p.nextToken()
         p.nextToken()
         return p
 
     def nextToken(self):
         self.curToken = self.peekToken
-        self.peekToken = self.l.NextToken()
+        self.peekToken = self.lexer.NextToken()
 
     def ParseProgram(self) -> ast.Program:
         program = ast.Program([])
@@ -46,8 +46,7 @@ class Parser(Generic[T]):
         if not self.expectPeek(token.IDENT):
             return None
 
-        stmt.Name = ast.Identifier(
-            Token=self.curToken, Value=self.curToken.Literal)
+        stmt.Name = ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
 
         if not self.expectPeek(token.ASSIGN):
             return None

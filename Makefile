@@ -1,6 +1,6 @@
 PYTHON=python
 
-all: isort yapf
+all: isort yapf flake8 test
 
 repl:
 	@PYTHON main.py
@@ -13,3 +13,7 @@ isort:
 
 yapf:
 	yapf -i -r .
+
+flake8:
+	flake8
+

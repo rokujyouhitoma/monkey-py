@@ -68,8 +68,7 @@ class Lexer:
         else:
             if self.isLetter(self.ch):
                 literal = self.readIdentifier()
-                tok = token.Token(
-                    Type=token.LookupIdent(literal), Literal=literal)
+                tok = token.Token(Type=token.LookupIdent(literal), Literal=literal)
                 return tok
             elif self.isDigit(self.ch):
                 tok = token.Token(Type=token.INT, Literal=self.readNumber())
@@ -89,8 +88,7 @@ class Lexer:
         return self.input[position:self.position]
 
     def isLetter(self, ch: bytes) -> bool:
-        return ('a' <= ch and ch <= 'z') or ('A' <= ch
-                                             and ch <= 'Z') or (ch == b'_')
+        return ('a' <= ch and ch <= 'z') or ('A' <= ch and ch <= 'Z') or (ch == b'_')
 
     def skipWhitespace(self) -> None:
         while self.ch == ' ' or self.ch == '\t' or self.ch == '\n' or self.ch == '\r':
