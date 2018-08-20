@@ -4,6 +4,30 @@ from monkey import ast, lexer, parser
 
 
 class TestParser(unittest.TestCase):
+    def test_return_statetments(self):
+        input = '''
+return 5;
+return 10;
+return 993322;
+'''
+        lex = lexer.New(input)
+        p = parser.New(lex)
+
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+        if len(program.Statements) != 3:
+            self.fail('program.Statements does not contain 3 statements. got=%s' % len(
+                program.Statements))
+
+        for stmt in program.Statements:
+            if type(stmt) != ast.ReturnStatement:
+                self.fail('stmt not *ast.returnStatement. got=%s' % stmt)
+                continue
+            returnStmt = stmt
+            if returnStmt.TokenLiteral() != 'return':
+                self.fail(
+                    'returnStmt.TokenLiteral not \'return\', got %s' % returnStmt.TokenLiteral())
+
     def test_let_statements(self):
         input = '''
 let x = 5;
@@ -40,7 +64,7 @@ def testLetStatement(self, s: ast.Statement, name: str) -> bool:
 
     letStmt = s
     # TODO: xxx
-    print(letStmt)
+    # print(letStmt)
 
     if letStmt.Name.Value != name:
         self.fail('letStmt.Name.Value not \'%s\'. got=%s' % (name, letStmt.Name.Value))
@@ -62,5 +86,5 @@ def checkParserErrors(self, p: parser.Parser) -> None:
     messages = []
     messages.append('parser has %s errors' % len(errors))
     for msg in errors:
-         messages.append('parser error: %s' % msg)
+        messages.append('parser error: %s' % msg)
     self.fail(messages)

@@ -11,7 +11,7 @@ class Node(metaclass=ABCMeta):
         pass
 
 
-class Statement(Node):
+class Statement(metaclass=ABCMeta):
     @property
     @abstractmethod
     def node(self) -> Node:
@@ -49,7 +49,7 @@ class Program(Node):
 
 
 @dataclass
-class Identifier(Expression):
+class Identifier(Node, Expression):
     Token: token.Token
     Value: str
 
@@ -65,10 +65,26 @@ class Identifier(Expression):
 
 
 @dataclass
-class LetStatement(Statement):
+class LetStatement(Node, Statement):
     Token: token.Token
     Name: Identifier
     Value: Expression
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def statementNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+
+@dataclass
+class ReturnStatement(Node, Statement):
+    Token: token.Token
+    ReturnValue: Expression
 
     @property
     def node(self) -> Node:

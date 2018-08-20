@@ -29,6 +29,8 @@ class Parser():
     def parseStatement(self) -> Optional[ast.Statement]:
         if self.curToken.Type == token.LET:
             return self.parseLetStatement()
+        elif self.curToken.Type == token.RETURN:
+            return self.parseReturnStatement()
         else:
             return None
 
@@ -45,6 +47,19 @@ class Parser():
 
         if not self.expectPeek(token.ASSIGN):
             return None
+
+        while not self.curTokenIs(token.SEMICOLON):
+            self.nextToken()
+
+        return stmt
+
+    def parseReturnStatement(self) -> Optional[ast.ReturnStatement]:
+        # TODO: for ReturnValue
+        stmt = ast.ReturnStatement(
+            Token=self.curToken,
+            ReturnValue=ast.Identifier(Token=self.curToken, Value=self.curToken.Literal))
+
+        self.nextToken()
 
         while not self.curTokenIs(token.SEMICOLON):
             self.nextToken()
