@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.21
+
+ - 2.6: P47-54 ASTにExpressionStatementの追加
+
 ## 2018.08.20
 
  - 2.5: P44-47 return statement

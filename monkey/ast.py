@@ -10,6 +10,10 @@ class Node(metaclass=ABCMeta):
     def TokenLiteral(self) -> str:
         pass
 
+    @abstractmethod
+    def String(self) -> str:
+        pass
+
 
 class Statement(metaclass=ABCMeta):
     @property
@@ -25,6 +29,10 @@ class Statement(metaclass=ABCMeta):
     def TokenLiteral(self) -> str:
         pass
 
+    @abstractmethod
+    def String(self) -> str:
+        pass
+
 
 class Expression(metaclass=ABCMeta):
     @property
@@ -34,6 +42,10 @@ class Expression(metaclass=ABCMeta):
 
     @abstractmethod
     def expressionNode(self) -> None:
+        pass
+
+    @abstractmethod
+    def String(self) -> str:
         pass
 
 
@@ -46,6 +58,9 @@ class Program(Node):
             return self.Statements[0].TokenLiteral()
         else:
             return ''
+
+    def String(self) -> str:
+        return ''.join([s.String() for s in self.Statements])
 
 
 @dataclass
@@ -62,6 +77,9 @@ class Identifier(Node, Expression):
 
     def TokenLiteral(self) -> str:
         return self.Token.Literal
+
+    def String(self) -> str:
+        return self.Value
 
 
 @dataclass
@@ -80,6 +98,19 @@ class LetStatement(Node, Statement):
     def TokenLiteral(self) -> str:
         return self.Token.Literal
 
+    def String(self) -> str:
+        out = []
+        out.append(self.TokenLiteral() + ' ')
+        out.append(self.Name.String())
+        out.append(' = ')
+
+        if self.Value is not None:
+            out.append(self.Value.String())
+
+        out.append(';')
+
+        return ''.join(out)
+
 
 @dataclass
 class ReturnStatement(Node, Statement):
@@ -95,3 +126,36 @@ class ReturnStatement(Node, Statement):
 
     def TokenLiteral(self) -> str:
         return self.Token.Literal
+
+    def String(self) -> str:
+        out = []
+        out.append(self.TokenLiteral() + ' ')
+
+        if self.ReturnValue is not None:
+            out.append(self.ReturnValue.String())
+
+        out.append(';')
+
+        return ''.join(out)
+
+
+@dataclass
+class ExpressionStatement(Node, Statement):
+    Token: token.Token
+    ExpressionValue: Expression
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def statementNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        if self.ExpressionValue is not None:
+            return self.ExpressionValue.String()
+
+        return ''
