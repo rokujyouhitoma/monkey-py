@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from monkey import _token as token
 
@@ -142,7 +142,7 @@ class ReturnStatement(Node, Statement):
 @dataclass
 class ExpressionStatement(Node, Statement):
     Token: token.Token
-    ExpressionValue: Expression
+    ExpressionValue: Optional[Expression]
 
     @property
     def node(self) -> Node:

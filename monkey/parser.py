@@ -1,14 +1,31 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Callable, Dict, List, Optional
 
 from monkey import _token as token, ast, lexer
+
+prefixParseFn = Callable[[], ast.Expression]
+infixParseFn = Callable[[
+    ast.Expression,
+], ast.Expression]
+
+LOWEST = 0
+EQUALS = 1  # ==
+LESSGREATER = 2  # > or <
+SUM = 3  # +
+PRODUCT = 4  # *
+PREFIX = 5  # -X or !X
+CALL = 6  # myFunction(X)
 
 
 @dataclass
 class Parser():
     lex: lexer.Lexer
+
     curToken: token.Token
     peekToken: token.Token
+
+    prefixParseFns: Dict[str, prefixParseFn] = field(default_factory=dict)
+    infixParseFns: Dict[str, infixParseFn] = field(default_factory=dict)
     errors: List[str] = field(default_factory=list)
 
     def nextToken(self) -> None:
@@ -32,7 +49,7 @@ class Parser():
         elif self.curToken.Type == token.RETURN:
             return self.parseReturnStatement()
         else:
-            return None
+            return self.parseExpressionStatement()
 
     def parseLetStatement(self) -> Optional[ast.LetStatement]:
         stmt = ast.LetStatement(
@@ -66,6 +83,23 @@ class Parser():
 
         return stmt
 
+    def parseExpressionStatement(self) -> Optional[ast.ExpressionStatement]:
+        stmt = ast.ExpressionStatement(
+            Token=self.curToken, ExpressionValue=self.parseExpression(LOWEST))
+
+        if self.peekTokenIs(token.SEMICOLON):
+            self.nextToken()
+
+        return stmt
+
+    def parseExpression(self, precedence: int) -> Optional[ast.Expression]:
+        prefix = self.prefixParseFns.get(self.curToken.Type.TypeName)
+        if prefix is None:
+            return None
+        leftExp = prefix()
+
+        return leftExp
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -87,12 +121,22 @@ class Parser():
         msg = 'expected next token to be %s, got %s instead' % (t, self.peekToken.Type)
         self.errors.append(msg)
 
+    def registerPrefix(self, tokenType: token.TokenType, fn: prefixParseFn) -> None:
+        self.prefixParseFns[tokenType.TypeName] = fn
+
+    def registerInfix(self, tokenType: token.TokenType, fn: infixParseFn) -> None:
+        self.infixParseFns[tokenType.TypeName] = fn
+
+    def parseIdentifier(self) -> ast.Expression:
+        return ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
+
 
 def New(lex: lexer.Lexer) -> Parser:
     p: Parser = Parser(
         lex=lex,
         curToken=token.Token(Type=token.ILLEGAL, Literal='ILLEGAL'),
         peekToken=token.Token(Type=token.ILLEGAL, Literal='ILLEGAL'))
+    p.registerPrefix(token.IDENT, p.parseIdentifier)
     p.nextToken()
     p.nextToken()
     return p

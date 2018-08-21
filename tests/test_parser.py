@@ -56,6 +56,26 @@ let foobar = 838383;
             if not testLetStatement(self, stmt, tt[0]):
                 return
 
+    def test_identifier_expression(self):
+        input = 'foobar;'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+        if len(program.Statements) != 1:
+            self.fail('program has not enough statements. got=%s' % len(program.Statements))
+        stmt = program.Statements[0]
+
+        ident = stmt.ExpressionValue
+        if ident is None:
+            self.fail('exp not *ast.Identifier. got=%s' % stmt.ExpressionValue)
+
+        if ident.Value != 'foobar':
+            self.fail('exp not *ast.Identifier. got=%s' % stmt.Expression)
+        if ident.TokenLiteral() != 'foobar':
+            self.fail('ident.TokenLiteral not %s. got=%s' % ('foobar', ident.TokenLiteral()))
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':
