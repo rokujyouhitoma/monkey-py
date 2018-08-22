@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional
 
-from monkey import _token as token
+from monkey import token
 
 
 class Node(metaclass=ABCMeta):

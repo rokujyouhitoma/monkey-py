@@ -1,6 +1,6 @@
 import unittest
 
-from monkey import _token as token
+from monkey import token
 from monkey.ast import Identifier, LetStatement, Program
 
 

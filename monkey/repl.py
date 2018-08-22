@@ -1,4 +1,4 @@
-from monkey import _token as token
+from monkey import token
 from monkey.lexer import New
 
 PROMPT = '>> '

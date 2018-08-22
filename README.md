@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.22
+
+ - Refactoring: token namespace
+
 ## 2018.08.21
 
  - 2.6: P54-60 ExpressionStatementの実装

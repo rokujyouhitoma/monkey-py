@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional
 
-from monkey import _token as token, ast, lexer
+from monkey import ast, lexer, token
 
 prefixParseFn = Callable[[], ast.Expression]
 infixParseFn = Callable[[
