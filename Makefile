@@ -1,6 +1,6 @@
 PYTHON=python
 
-all: isort yapf flake8 mypy test
+all: clean isort yapf flake8 mypy test
 
 repl:
 	@PYTHON main.py
@@ -19,3 +19,7 @@ flake8:
 
 mypy:
 	mypy .
+
+clean:
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -delete
