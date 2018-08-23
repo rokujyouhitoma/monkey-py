@@ -76,6 +76,29 @@ let foobar = 838383;
         if ident.TokenLiteral() != 'foobar':
             self.fail('ident.TokenLiteral not %s. got=%s' % ('foobar', ident.TokenLiteral()))
 
+    def test_integer_literal_expression(self):
+        input = '5;'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+        if len(program.Statements) != 1:
+            self.fail('program has not enough statements. got=%s' % len(program.Statements))
+        stmt = program.Statements[0]
+
+        if stmt is None:
+            self.fail('program.Statements[0] is not ast.ExpressionStatement. got=%s' % stmt)
+
+        literal = stmt.ExpressionValue
+        if literal is None:
+            self.fail('exp not *ast.IntegerLiteral. got=%s' % stmt.ExpressionValue)
+
+        if literal.Value != 5:
+            self.fail('literal.Value not %s. got=%s' % (5, stmt.Expression))
+        if literal.TokenLiteral() != '5':
+            self.fail('literal.TokenLiteral not %s. got=%s' % ('5', literal.TokenLiteral()))
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':

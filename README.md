@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.23
+
+ - 2.6: P60-63 Praserの改善。IntegerLiteralのサポート
+
 ## 2018.08.22
 
  - Refactoring: token namespace

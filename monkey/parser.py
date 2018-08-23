@@ -3,7 +3,7 @@ from typing import Callable, Dict, List, Optional
 
 from monkey import ast, lexer, token
 
-prefixParseFn = Callable[[], ast.Expression]
+prefixParseFn = Callable[[], Optional[ast.Expression]]
 infixParseFn = Callable[[
     ast.Expression,
 ], ast.Expression]
@@ -100,6 +100,19 @@ class Parser():
 
         return leftExp
 
+    def parseIdentifier(self) -> ast.Expression:
+        return ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
+
+    def parseIntegerLiteral(self) -> Optional[ast.Expression]:
+        try:
+            value = int(self.curToken.Literal)
+        except ValueError:
+            msg = 'could not parse %s as integer' % self.curToken.Literal
+            self.errors.append(msg)
+            return None
+        lit = ast.IntegerLiteral(Token=self.curToken, Value=value)
+        return lit
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -127,9 +140,6 @@ class Parser():
     def registerInfix(self, tokenType: token.TokenType, fn: infixParseFn) -> None:
         self.infixParseFns[tokenType.TypeName] = fn
 
-    def parseIdentifier(self) -> ast.Expression:
-        return ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
-
 
 def New(lex: lexer.Lexer) -> Parser:
     p: Parser = Parser(
@@ -137,6 +147,7 @@ def New(lex: lexer.Lexer) -> Parser:
         curToken=token.Token(Type=token.ILLEGAL, Literal='ILLEGAL'),
         peekToken=token.Token(Type=token.ILLEGAL, Literal='ILLEGAL'))
     p.registerPrefix(token.IDENT, p.parseIdentifier)
+    p.registerPrefix(token.INT, p.parseIntegerLiteral)
     p.nextToken()
     p.nextToken()
     return p

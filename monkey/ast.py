@@ -159,3 +159,22 @@ class ExpressionStatement(Node, Statement):
             return self.ExpressionValue.String()
 
         return ''
+
+
+@dataclass
+class IntegerLiteral(Node, Expression):
+    Token: token.Token
+    Value: int
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        return self.Token.Literal
