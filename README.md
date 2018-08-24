@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.24
+
+ - 2.6: P63-68 Parserの改善。前置演算子（PrefixExpression)のサポート
+
 ## 2018.08.23
 
  - 2.6: P60-63 Praserの改善。IntegerLiteralのサポート

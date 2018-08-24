@@ -1,4 +1,5 @@
 import unittest
+from dataclasses import dataclass
 
 from monkey import ast, lexer, parser
 
@@ -99,6 +100,40 @@ let foobar = 838383;
         if literal.TokenLiteral() != '5':
             self.fail('literal.TokenLiteral not %s. got=%s' % ('5', literal.TokenLiteral()))
 
+    def test_parsing_prefix_expressions(self):
+        @dataclass
+        class Prefix():
+            input: str
+            operator: str
+            integerValue: str
+
+        prefixTests = [
+            Prefix('!5;', '!', 5),
+            Prefix('-15', '-', 15),
+        ]
+        for tt in prefixTests:
+            lex = lexer.New(tt.input)
+            p = parser.New(lex)
+            program = p.ParseProgram()
+            checkParserErrors(self, p)
+            if len(program.Statements) != 1:
+                self.fail('program.Statements does not contain %s statements. got=%s' %
+                          (lex, len(program.Statements)))
+
+            stmt = program.Statements[0]
+
+            if stmt is None:
+                self.fail('program.Statements[0] is not ast.ExpressionStatement. got=%s' % stmt)
+
+            exp = stmt.ExpressionValue
+            if exp is None:
+                self.fail('exp not *ast.PrefixExpression. got=%s' % stmt.ExpressionValue)
+            if exp.Operator != tt.operator:
+                self.fail('exp.Operator is not \'%s\'. got=%s' % (tt.operator, exp.Operator))
+
+            if not testIntegerLiteral(self, exp.Right, tt.integerValue):
+                return
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':
@@ -118,6 +153,20 @@ def testLetStatement(self, s: ast.Statement, name: str) -> bool:
             'letStmt.Name.TokenLiteral() not \'%s\'. got=%s' % (name, letStmt.Name.TokenLiteral()))
         return False
 
+    return True
+
+
+def testIntegerLiteral(self, il: ast.Expression, value: int) -> bool:
+    integ = il
+    if not integ:
+        self.fail('il not *ast.IntegerLiteral. got=%s' % il)
+        return False
+    if integ.Value != value:
+        self.fail('integ.Value not %s. got=%s' % (value, integ.Value))
+        return False
+    if integ.TokenLiteral() != str(value):
+        self.fail('integ.TokenLiteral not %s. got=%s' % (value, integ.TokenLiteral()))
+        return False
     return True
 
 

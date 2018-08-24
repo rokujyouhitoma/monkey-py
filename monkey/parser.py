@@ -94,6 +94,7 @@ class Parser():
     def parseExpression(self, precedence: int) -> Optional[ast.Expression]:
         prefix = self.prefixParseFns.get(self.curToken.Type.TypeName)
         if prefix is None:
+            self.noPrefixParseFnError(self.curToken.Type)
             return None
         leftExp = prefix()
 
@@ -111,6 +112,14 @@ class Parser():
             return None
         lit = ast.IntegerLiteral(Token=self.curToken, Value=value)
         return lit
+
+    def parsePrefixExpression(self) -> Optional[ast.Expression]:
+        curToken = self.curToken
+        self.nextToken()
+        expression = ast.PrefixExpression(
+            Token=curToken, Operator=curToken.Literal, Right=self.parseExpression(PREFIX))
+
+        return expression
 
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
@@ -139,6 +148,10 @@ class Parser():
     def registerInfix(self, tokenType: token.TokenType, fn: infixParseFn) -> None:
         self.infixParseFns[tokenType.TypeName] = fn
 
+    def noPrefixParseFnError(self, t: token.TokenType) -> None:
+        msg = 'no prefix parse function for %s found' % t
+        self.errors.append(msg)
+
 
 def New(lex: lexer.Lexer) -> Parser:
     p: Parser = Parser(
@@ -147,6 +160,8 @@ def New(lex: lexer.Lexer) -> Parser:
         peekToken=token.Token(Type=token.ILLEGAL, Literal='ILLEGAL'))
     p.registerPrefix(token.IDENT, p.parseIdentifier)
     p.registerPrefix(token.INT, p.parseIntegerLiteral)
+    p.registerPrefix(token.BANG, p.parsePrefixExpression)
+    p.registerPrefix(token.MINUS, p.parsePrefixExpression)
     p.nextToken()
     p.nextToken()
     return p
