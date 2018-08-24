@@ -71,7 +71,6 @@ class Parser():
         return stmt
 
     def parseReturnStatement(self) -> Optional[ast.ReturnStatement]:
-        # TODO: for ReturnValue
         stmt = ast.ReturnStatement(
             Token=self.curToken,
             ReturnValue=ast.Identifier(Token=self.curToken, Value=self.curToken.Literal))
