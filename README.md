@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.25
+
+ - 2.6: P68-73 Parserの改善。中置演算子（InfixExpression）のサポート
+
 ## 2018.08.24
 
  - 2.6: P63-68 Parserの改善。前置演算子（PrefixExpression)のサポート

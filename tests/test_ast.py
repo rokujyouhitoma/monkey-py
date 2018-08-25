@@ -16,4 +16,4 @@ class TestAst(unittest.TestCase):
         ])
 
         if program.String() != 'let myVar = anotherVar;':
-            self.fail('program.String() wrong. got="%s"' % program.String())
+            self.fail('program.String() wrong. got=\'%s\'' % program.String())

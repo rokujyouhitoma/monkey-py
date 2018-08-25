@@ -108,8 +108,8 @@ if (5 < 10) {
         for i, tt in enumerate(tests):
             tok = lexer.NextToken()
             if tok.Type != tt[0]:
-                self.fail(
-                    'tests[%d] - tokentype wrong. expected="%s", got="%s"' % (i, tt[0], tok.Type))
+                self.fail('tests[%d] - tokentype wrong. expected=\'%s\', got=\'%s\'' % (i, tt[0],
+                                                                                        tok.Type))
             if tok.Literal != tt[1]:
-                self.fail('tests[%d] - tokenliteral wrong. expected="%s", got="%s"' % (i, tt[1],
-                                                                                       tok.Literal))
+                self.fail('tests[%d] - tokenliteral wrong. expected=\'%s\', got=\'%s\'' %
+                          (i, tt[1], tok.Literal))

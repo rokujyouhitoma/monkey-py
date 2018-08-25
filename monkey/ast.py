@@ -204,3 +204,32 @@ class PrefixExpression(Node, Expression):
             out.append(self.Right.String())
         out.append('}')
         return ''.join(out)
+
+
+@dataclass
+class InfixExpression(Node, Expression):
+    Token: token.Token
+    Left: Optional[Expression]
+    Operator: str
+    Right: Optional[Expression]
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        out: List[str] = []
+        out.append('{')
+        if self.Left is not None:
+            out.append(self.Left.String())
+        out.append(' ' + self.Operator + ' ')
+        if self.Right is not None:
+            out.append(self.Right.String())
+        out.append('}')
+        return ''.join(out)

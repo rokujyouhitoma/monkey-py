@@ -1,5 +1,6 @@
 import unittest
 from dataclasses import dataclass
+from typing import List
 
 from monkey import ast, lexer, parser
 
@@ -132,6 +133,51 @@ let foobar = 838383;
                 self.fail('exp.Operator is not \'%s\'. got=%s' % (tt.operator, exp.Operator))
 
             if not testIntegerLiteral(self, exp.Right, tt.integerValue):
+                return
+
+    def test_parsing_infix_expressions(self):
+        @dataclass
+        class Infix():
+            input: str
+            leftValue: int
+            operator: str
+            rightValue: int
+
+        infixTests: List[Infix] = [
+            Infix('5 + 5;', 5, '+', 5),
+            Infix('5 - 5;', 5, '-', 5),
+            Infix('5 * 5;', 5, '*', 5),
+            Infix('5 / 5;', 5, '/', 5),
+            Infix('5 > 5;', 5, '>', 5),
+            Infix('5 < 5;', 5, '<', 5),
+            Infix('5 == 5;', 5, '==', 5),
+            Infix('5 != 5;', 5, '!=', 5),
+        ]
+        for tt in infixTests:
+            lex = lexer.New(tt.input)
+            p = parser.New(lex)
+            program = p.ParseProgram()
+            checkParserErrors(self, p)
+            if len(program.Statements) != 1:
+                self.fail('program.Statements does not contain %s statements. got=%s\n' %
+                          (1, len(program.Statements)))
+
+            stmt = program.Statements[0]
+            if not stmt:
+                self.fail('program.Statements[0] is not ast.ExpressionStatement. got=%s' %
+                          program.Statements[0])
+
+            exp = stmt.ExpressionValue
+            if not exp:
+                self.fail('exp is not ast.InfixExpression. got=%s' % stmt.ExpressionValue)
+
+            if not testIntegerLiteral(self, exp.Left, tt.leftValue):
+                return
+
+            if exp.Operator != tt.operator:
+                self.fail('exp.Operator is not \'%s\'. got=%s' % (tt.operator, exp.Operator))
+
+            if not testIntegerLiteral(self, exp.Right, tt.rightValue):
                 return
 
 

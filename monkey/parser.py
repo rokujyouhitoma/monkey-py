@@ -6,7 +6,7 @@ from monkey import ast, lexer, token
 prefixParseFn = Callable[[], Optional[ast.Expression]]
 infixParseFn = Callable[[
     ast.Expression,
-], ast.Expression]
+], Optional[ast.Expression]]
 
 LOWEST = 0
 EQUALS = 1  # ==
@@ -15,6 +15,17 @@ SUM = 3  # +
 PRODUCT = 4  # *
 PREFIX = 5  # -X or !X
 CALL = 6  # myFunction(X)
+
+precedences: Dict[str, int] = {
+    token.EQ.TypeName: EQUALS,
+    token.NOT_EQ.TypeName: EQUALS,
+    token.LT.TypeName: LESSGREATER,
+    token.GT.TypeName: LESSGREATER,
+    token.PLUS.TypeName: SUM,
+    token.MINUS.TypeName: SUM,
+    token.SLASH.TypeName: PRODUCT,
+    token.ASTERISK.TypeName: PRODUCT,
+}
 
 
 @dataclass
@@ -98,6 +109,13 @@ class Parser():
             return None
         leftExp = prefix()
 
+        while (not self.peekTokenIs(token.SEMICOLON)) and (precedence < self.peekPrecedence()):
+            infix = self.infixParseFns.get(self.peekToken.Type.TypeName)
+            if infix is None:
+                return leftExp
+            self.nextToken()
+            if leftExp is not None:
+                leftExp = infix(leftExp)
         return leftExp
 
     def parseIdentifier(self) -> ast.Expression:
@@ -118,6 +136,19 @@ class Parser():
         self.nextToken()
         expression = ast.PrefixExpression(
             Token=curToken, Operator=curToken.Literal, Right=self.parseExpression(PREFIX))
+
+        return expression
+
+    def parseInfixExpression(self, left: ast.Expression) -> Optional[ast.Expression]:
+        curToken = self.curToken
+        curTokenLiteral = self.curToken.Literal
+        precedence = self.curPrecedence()
+        self.nextToken()
+        expression = ast.InfixExpression(
+            Token=curToken,
+            Operator=curTokenLiteral,
+            Left=left,
+            Right=self.parseExpression(precedence))
 
         return expression
 
@@ -152,6 +183,20 @@ class Parser():
         msg = 'no prefix parse function for %s found' % t
         self.errors.append(msg)
 
+    def peekPrecedence(self) -> int:
+        p = precedences.get(self.peekToken.Type.TypeName)
+        if p:
+            return p
+
+        return LOWEST
+
+    def curPrecedence(self) -> int:
+        p = precedences.get(self.curToken.Type.TypeName)
+        if p:
+            return p
+
+        return LOWEST
+
 
 def New(lex: lexer.Lexer) -> Parser:
     p: Parser = Parser(
@@ -162,6 +207,14 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerPrefix(token.INT, p.parseIntegerLiteral)
     p.registerPrefix(token.BANG, p.parsePrefixExpression)
     p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+    p.registerInfix(token.PLUS, p.parseInfixExpression)
+    p.registerInfix(token.MINUS, p.parseInfixExpression)
+    p.registerInfix(token.SLASH, p.parseInfixExpression)
+    p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+    p.registerInfix(token.EQ, p.parseInfixExpression)
+    p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
+    p.registerInfix(token.LT, p.parseInfixExpression)
+    p.registerInfix(token.GT, p.parseInfixExpression)
     p.nextToken()
     p.nextToken()
     return p
