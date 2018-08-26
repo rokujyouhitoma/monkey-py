@@ -1,6 +1,6 @@
 import unittest
 from dataclasses import dataclass
-from typing import List
+from typing import Any, List
 
 from monkey import ast, lexer, parser
 
@@ -243,6 +243,52 @@ def testIntegerLiteral(self, il: ast.Expression, value: int) -> bool:
     if integ.TokenLiteral() != str(value):
         self.fail('integ.TokenLiteral not %s. got=%s' % (value, integ.TokenLiteral()))
         return False
+    return True
+
+
+def testIdentifier(self, exp: ast.Expression, value: str) -> bool:
+    ident = exp
+    if ident is None:
+        self.fail('exp not *ast.Identifier. got=%s' % exp)
+        return False
+
+    if ident.Value != value:
+        self.fail('ident.Value not %s. got=%s' % (value, ident.Value))
+        return False
+
+    if ident.TokenLiteral() != value:
+        self.fail('ident.TokenLiteral not %s. got=%s' % (value, ident.TokenLiteral()))
+        return False
+
+    return True
+
+
+def testLiteralExpression(self, exp: ast.Expression, expected: Any) -> bool:
+    v = type(expected)
+    if v is int:
+        return testIntegerLiteral(self, exp, int(expected))
+    elif v is str:
+        return testIdentifier(self, exp, str(expected))
+    self.fail('type of exp not handled. got=%s' % exp)
+    return False
+
+
+def testInfixExpression(self, exp: ast.Expression, left: Any, operator: str, right: Any) -> bool:
+    opExp = exp
+    if opExp is None:
+        self.fail('exp is not ast.InfixExpression. got=%s(%s)' % (exp, exp))
+        return False
+
+    if not testLiteralExpression(self, opExp.Left, left):
+        return False
+
+    if opExp.Operator != operator:
+        self.fail('exp.Operator is not \'%s\'. got=%s' % (operator, opExp.Operator))
+        return False
+
+    if not testLiteralExpression(self, opExp.Right, right):
+        return False
+
     return True
 
 
