@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.26
+
+ - 2.6: P73-75 Parserの中置演算子（InfixExpression）テストケースを拡充
+
 ## 2018.08.25
 
  - 2.6: P68-73 Parserの改善。中置演算子（InfixExpression）のサポート

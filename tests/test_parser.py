@@ -180,6 +180,36 @@ let foobar = 838383;
             if not testIntegerLiteral(self, exp.Right, tt.rightValue):
                 return
 
+    def test_operator_precedence_parsing(self):
+        @dataclass
+        class Test():
+            input: str
+            expected: str
+
+        tests: List[Test] = [
+            Test('-a * b', '((-a) * b)'),
+            Test('!-a', '(!(-a))'),
+            Test('a + b + c', '((a + b) + c)'),
+            Test('a + b - c', '((a + b) - c)'),
+            Test('a * b * c', '((a * b) * c)'),
+            Test('a * b / c', '((a * b) / c)'),
+            Test('a + b / c', '(a + (b / c))'),
+            Test('a + b * c + d / e - f', '(((a + (b * c)) + (d / e)) - f)'),
+            Test('3 + 4; -5 * 5', '(3 + 4)((-5) * 5)'),
+            Test('5 > 4 == 3 < 4', '((5 > 4) == (3 < 4))'),
+            Test('5 < 4 != 3 > 4', '((5 < 4) != (3 > 4))'),
+            Test('3 + 4 * 5 == 3 * 1 + 4 * 5', '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))'),
+        ]
+
+        for tt in tests:
+            lex = lexer.New(tt.input)
+            p = parser.New(lex)
+            program = p.ParseProgram()
+            checkParserErrors(self, p)
+            actual = program.String()
+            if actual != tt.expected:
+                self.fail('expected=%s, got=%s' % (tt.expected, actual))
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':

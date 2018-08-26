@@ -198,11 +198,11 @@ class PrefixExpression(Node, Expression):
 
     def String(self) -> str:
         out: List[str] = []
-        out.append('{')
+        out.append('(')
         out.append(self.Operator)
         if self.Right is not None:
             out.append(self.Right.String())
-        out.append('}')
+        out.append(')')
         return ''.join(out)
 
 
@@ -225,11 +225,11 @@ class InfixExpression(Node, Expression):
 
     def String(self) -> str:
         out: List[str] = []
-        out.append('{')
+        out.append('(')
         if self.Left is not None:
             out.append(self.Left.String())
         out.append(' ' + self.Operator + ' ')
         if self.Right is not None:
             out.append(self.Right.String())
-        out.append('}')
+        out.append(')')
         return ''.join(out)
