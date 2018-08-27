@@ -212,6 +212,11 @@ let foobar = 838383;
             Test('false', 'false'),
             Test('3 > 5 == false', '((3 > 5) == false)'),
             Test('3 < 5 == true', '((3 < 5) == true)'),
+            Test('1 + (2 + 3) + 4', '((1 + (2 + 3)) + 4)'),
+            Test('(5 + 5) * 2', '((5 + 5) * 2)'),
+            Test('2 / (5 + 5)', '(2 / (5 + 5))'),
+            Test('-(5 + 5)', '(-(5 + 5))'),
+            Test('!(true == true)', '(!(true == true))'),
         ]
 
         for tt in tests:
@@ -356,4 +361,4 @@ def checkParserErrors(self, p: parser.Parser) -> None:
     messages.append('parser has %s errors' % len(errors))
     for msg in errors:
         messages.append('parser error: %s' % msg)
-    self.fail(messages)
+    self.fail('\n'.join(messages))

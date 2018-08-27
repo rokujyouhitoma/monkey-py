@@ -16,6 +16,7 @@
 
 ## 2018.08.27
 
+ - 2.8: P91-03 Parserの改善。GroupingExpressionのサポート
  - 2.8: P87-91 Parserの改善。真偽値リテラル（BooleanLiteral）のサポート
 
 ## 2018.08.26

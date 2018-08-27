@@ -155,6 +155,16 @@ class Parser():
     def parseBoolean(self) -> Optional[ast.Expression]:
         return ast.Boolean(Token=self.curToken, Value=self.curTokenIs(token.TRUE))
 
+    def parseGroupedExpression(self) -> Optional[ast.Expression]:
+        self.nextToken()
+
+        exp = self.parseExpression(LOWEST)
+
+        if not self.expectPeek(token.RPAREN):
+            return None
+
+        return exp
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -220,6 +230,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerInfix(token.GT, p.parseInfixExpression)
     p.registerPrefix(token.TRUE, p.parseBoolean)
     p.registerPrefix(token.FALSE, p.parseBoolean)
+    p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
     p.nextToken()
     p.nextToken()
     return p
