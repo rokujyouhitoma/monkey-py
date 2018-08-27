@@ -176,7 +176,8 @@ let foobar = 838383;
             if not exp:
                 self.fail('exp is not ast.InfixExpression. got=%s' % stmt.ExpressionValue)
 
-            if not testInfixExpression(self, stmt.ExpressionValue, tt.leftValue, tt.operator, tt.rightValue):
+            if not testInfixExpression(self, stmt.ExpressionValue, tt.leftValue, tt.operator,
+                                       tt.rightValue):
                 continue
 
             if not testLiteralExpression(self, exp.Left, tt.leftValue):
