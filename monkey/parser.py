@@ -152,6 +152,9 @@ class Parser():
 
         return expression
 
+    def parseBoolean(self) -> Optional[ast.Expression]:
+        return ast.Boolean(Token=self.curToken, Value=self.curTokenIs(token.TRUE))
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -215,6 +218,8 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
     p.registerInfix(token.LT, p.parseInfixExpression)
     p.registerInfix(token.GT, p.parseInfixExpression)
+    p.registerPrefix(token.TRUE, p.parseBoolean)
+    p.registerPrefix(token.FALSE, p.parseBoolean)
     p.nextToken()
     p.nextToken()
     return p

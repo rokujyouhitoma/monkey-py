@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.27
+
+ - 2.8: P87-90 Parserの改善。真偽値リテラル（BooleanLiteral）のサポート
+
 ## 2018.08.26
 
  - 2.8: P85-87 test helperの拡充

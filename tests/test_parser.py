@@ -199,6 +199,10 @@ let foobar = 838383;
             Test('5 > 4 == 3 < 4', '((5 > 4) == (3 < 4))'),
             Test('5 < 4 != 3 > 4', '((5 < 4) != (3 > 4))'),
             Test('3 + 4 * 5 == 3 * 1 + 4 * 5', '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))'),
+            Test('true', 'true'),
+            Test('false', 'false'),
+            Test('3 > 5 == false', '((3 > 5) == false)'),
+            Test('3 < 5 == true', '((3 < 5) == true)'),
         ]
 
         for tt in tests:
@@ -209,6 +213,29 @@ let foobar = 838383;
             actual = program.String()
             if actual != tt.expected:
                 self.fail('expected=%s, got=%s' % (tt.expected, actual))
+
+    def test_boolean_expression(self):
+        input = 'true;'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+        if len(program.Statements) != 1:
+            self.fail('program has not enough statements. got=%s' % len(program.Statements))
+        stmt = program.Statements[0]
+
+        if stmt is None:
+            self.fail('program.Statements[0] is not ast.ExpressionStatement. got=%s' % stmt)
+
+        literal = stmt.ExpressionValue
+        if literal is None:
+            self.fail('exp not *ast.IntegerLiteral. got=%s' % stmt.ExpressionValue)
+
+        if literal.Value is not True:
+            self.fail('literal.Value not %s. got=%s' % (True, stmt.Expression))
+        if literal.TokenLiteral() != 'true':
+            self.fail('literal.TokenLiteral not %s. got=%s' % ('true', literal.TokenLiteral()))
 
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
@@ -269,6 +296,8 @@ def testLiteralExpression(self, exp: ast.Expression, expected: Any) -> bool:
         return testIntegerLiteral(self, exp, int(expected))
     elif v is str:
         return testIdentifier(self, exp, str(expected))
+    elif v is bool:
+        return testBooleanLietral(self, exp, bool(expected))
     self.fail('type of exp not handled. got=%s' % exp)
     return False
 
@@ -287,6 +316,23 @@ def testInfixExpression(self, exp: ast.Expression, left: Any, operator: str, rig
         return False
 
     if not testLiteralExpression(self, opExp.Right, right):
+        return False
+
+    return True
+
+
+def testBooleanLietral(self, exp: ast.Expression, value: bool) -> bool:
+    bo = exp
+    if bo is None:
+        self.fail('exp not *ast.Boolean. got=%s' % exp)
+        return False
+
+    if bo.Value != value:
+        self.fail('bo.Value not %s. got=%s' % (value, bo.Value))
+        return False
+
+    if bo.TokenLiteral() != str(value):
+        self.fail('bo.TokenLiteral not %s. got=%s' % (value, bo.TokenLiteral()))
         return False
 
     return True
