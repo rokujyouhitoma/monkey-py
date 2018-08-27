@@ -106,11 +106,13 @@ let foobar = 838383;
         class Prefix():
             input: str
             operator: str
-            integerValue: str
+            value: Any
 
         prefixTests = [
             Prefix('!5;', '!', 5),
             Prefix('-15', '-', 15),
+            Prefix('!true;', '!', True),
+            Prefix('!false;', '!', False),
         ]
         for tt in prefixTests:
             lex = lexer.New(tt.input)
@@ -132,16 +134,16 @@ let foobar = 838383;
             if exp.Operator != tt.operator:
                 self.fail('exp.Operator is not \'%s\'. got=%s' % (tt.operator, exp.Operator))
 
-            if not testIntegerLiteral(self, exp.Right, tt.integerValue):
-                return
+            if not testLiteralExpression(self, exp.Right, tt.value):
+                continue
 
     def test_parsing_infix_expressions(self):
         @dataclass
         class Infix():
             input: str
-            leftValue: int
+            leftValue: Any
             operator: str
-            rightValue: int
+            rightValue: Any
 
         infixTests: List[Infix] = [
             Infix('5 + 5;', 5, '+', 5),
@@ -152,6 +154,9 @@ let foobar = 838383;
             Infix('5 < 5;', 5, '<', 5),
             Infix('5 == 5;', 5, '==', 5),
             Infix('5 != 5;', 5, '!=', 5),
+            Infix('true == true', True, '==', True),
+            Infix('true != false', True, '!=', False),
+            Infix('false == false', False, '==', False),
         ]
         for tt in infixTests:
             lex = lexer.New(tt.input)
@@ -171,14 +176,17 @@ let foobar = 838383;
             if not exp:
                 self.fail('exp is not ast.InfixExpression. got=%s' % stmt.ExpressionValue)
 
-            if not testIntegerLiteral(self, exp.Left, tt.leftValue):
-                return
+            if not testInfixExpression(self, stmt.ExpressionValue, tt.leftValue, tt.operator, tt.rightValue):
+                continue
+
+            if not testLiteralExpression(self, exp.Left, tt.leftValue):
+                continue
 
             if exp.Operator != tt.operator:
                 self.fail('exp.Operator is not \'%s\'. got=%s' % (tt.operator, exp.Operator))
 
-            if not testIntegerLiteral(self, exp.Right, tt.rightValue):
-                return
+            if not testLiteralExpression(self, exp.Right, tt.rightValue):
+                continue
 
     def test_operator_precedence_parsing(self):
         @dataclass
@@ -331,7 +339,7 @@ def testBooleanLietral(self, exp: ast.Expression, value: bool) -> bool:
         self.fail('bo.Value not %s. got=%s' % (value, bo.Value))
         return False
 
-    if bo.TokenLiteral() != str(value):
+    if bo.TokenLiteral() != str(value).lower():
         self.fail('bo.TokenLiteral not %s. got=%s' % (value, bo.TokenLiteral()))
         return False
 
