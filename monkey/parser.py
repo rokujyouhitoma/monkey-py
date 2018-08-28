@@ -165,6 +165,56 @@ class Parser():
 
         return exp
 
+    def parseIfExpression(self) -> Optional[ast.Expression]:
+        if not self.expectPeek(token.LPAREN):
+            return None
+
+        self.nextToken()
+
+        condition = self.parseExpression(LOWEST)
+        if not condition:
+            return None
+
+        if not self.expectPeek(token.RPAREN):
+            return None
+
+        if not self.expectPeek(token.LBRACE):
+            return None
+
+        consequence = self.parseBlockStatement()
+
+        alternative = None
+        if self.peekTokenIs(token.ELSE):
+            self.nextToken()
+
+            if not self.expectPeek(token.LBRACE):
+                return None
+
+            alternative = self.parseBlockStatement()
+
+        expression = ast.IfExpression(
+            Token=self.curToken,
+            Condition=condition,
+            Consequence=consequence,
+            Alternative=alternative)
+
+        return expression
+
+    def parseBlockStatement(self) -> ast.BlockStatement:
+        curToken = self.curToken
+
+        self.nextToken()
+
+        statements: List[ast.Statement] = []
+        while (not self.curTokenIs(token.RBRACE)) and (not self.curTokenIs(token.EOF)):
+            stmt = self.parseStatement()
+            if stmt is not None:
+                statements.append(stmt)
+            self.nextToken()
+
+        block = ast.BlockStatement(Token=curToken, Statements=statements)
+        return block
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -231,6 +281,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerPrefix(token.TRUE, p.parseBoolean)
     p.registerPrefix(token.FALSE, p.parseBoolean)
     p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
+    p.registerPrefix(token.IF, p.parseIfExpression)
     p.nextToken()
     p.nextToken()
     return p

@@ -14,9 +14,13 @@
 
 # Histories
 
+## 2018.08.28
+
+ - 2.8: P93-99 Parserの改善。if式（IfExpression）のサポート
+
 ## 2018.08.27
 
- - 2.8: P91-03 Parserの改善。GroupingExpressionのサポート
+ - 2.8: P91-93 Parserの改善。GroupingExpressionのサポート
  - 2.8: P87-91 Parserの改善。真偽値リテラル（BooleanLiteral）のサポート
 
 ## 2018.08.26

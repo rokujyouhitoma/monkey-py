@@ -251,6 +251,80 @@ let foobar = 838383;
         if literal.TokenLiteral() != 'true':
             self.fail('literal.TokenLiteral not %s. got=%s' % ('true', literal.TokenLiteral()))
 
+    def test_if_expression(self):
+        input = 'if (x < y) { x }'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        if len(program.Statements) != 1:
+            self.fail('program.Statements does not contain %s statements. got=%s\n' %
+                      (lex, len(program.Statements)))
+
+        stmt = program.Statements[0]
+        if stmt is None:
+            self.fail('program.Statements[0] is not ast.ExpressionStatement. got=%s' % stmt)
+
+        exp = stmt.ExpressionValue
+        if exp is None:
+            self.fail('stmt.Expression is not ast.IfExpression. got=%s' % stmt.Expression)
+
+        if not testInfixExpression(self, exp.Condition, 'x', '<', 'y'):
+            return
+
+        if len(exp.Consequence.Statements) != 1:
+            self.fail('consequence is not 1 statements. got=%s\n' % len(exp.Consequence.Statements))
+
+        consequence = exp.Consequence.Statements[0]
+        if consequence is None:
+            self.fail('Statements[0] is not ast.ExpressionStatement. got=%s\n' %
+                      exp.Consequence.Statements[0])
+
+        if not testIdentifier(self, consequence.ExpressionValue, 'x'):
+            return
+
+        if exp.Alternative is not None:
+            self.fail('exp.Alternative.Statements was not nil. got=%s', exp.Alternative)
+
+    def test_if_else_expression(self):
+        input = 'if (x < y) { x } else { y }'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        if len(program.Statements) != 1:
+            self.fail('program.Statements does not contain %s statements. got=%s\n' %
+                      (lex, len(program.Statements)))
+
+        stmt = program.Statements[0]
+        if not stmt:
+            self.fail('program.Statements[0] is not ast.ExpressionStatement. got=%s' % stmt)
+
+        exp = stmt.ExpressionValue
+        if not exp:
+            self.fail('stmt.Expression is not ast.IfExpression. got=%s' % stmt.Expression)
+
+        if not testInfixExpression(self, exp.Condition, 'x', '<', 'y'):
+            return
+
+        if len(exp.Consequence.Statements) != 1:
+            self.fail('consequence is not 1 statements. got=%s\n' % len(exp.Consequence.Statements))
+
+        consequence = exp.Consequence.Statements[0]
+        if not consequence:
+            self.fail('Statements[0] is not ast.ExpressionStatement. got=%s\n' %
+                      exp.Consequence.Statements[0])
+
+        if not testIdentifier(self, consequence.ExpressionValue, 'x'):
+            return
+
+        if not exp.Alternative:
+            self.fail('exp.Alternative.Statements was not nil. got=%s' % exp.Alternative)
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':

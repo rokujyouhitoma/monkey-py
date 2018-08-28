@@ -252,3 +252,54 @@ class Boolean(Node, Expression):
 
     def String(self) -> str:
         return self.Token.Literal
+
+
+@dataclass
+class BlockStatement(Node, Expression):
+    Token: token.Token
+    Statements: List[Statement]
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        out: List[str] = []
+        for s in self.Statements:
+            out.append(s.String())
+        return ''.join(out)
+
+
+@dataclass
+class IfExpression(Node, Expression):
+    Token: token.Token
+    Condition: Expression
+    Consequence: BlockStatement
+    Alternative: Optional[BlockStatement]
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        out: List[str] = []
+        out.append('if')
+        out.append(self.Condition.String())
+        out.append(' ')
+        out.append(self.Consequence.String())
+        if self.Alternative is not None:
+            out.append('else ')
+            out.append(self.Alternative.String())
+        return ''.join(out)
