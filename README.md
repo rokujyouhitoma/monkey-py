@@ -16,6 +16,7 @@
 
 ## 2018.08.28
 
+ - 2.8: P99-104 Parserの改善。関数リテラル（FunctionLiteral）のサポート
  - 2.8: P93-99 Parserの改善。if式（IfExpression）のサポート
 
 ## 2018.08.27

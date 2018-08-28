@@ -215,6 +215,44 @@ class Parser():
         block = ast.BlockStatement(Token=curToken, Statements=statements)
         return block
 
+    def parseFunctionLiteral(self) -> Optional[ast.Expression]:
+        if not self.expectPeek(token.LPAREN):
+            return None
+
+        parameters = self.parseFunctionParameters()
+
+        if not self.expectPeek(token.LBRACE):
+            return None
+
+        body = self.parseBlockStatement()
+
+        lit = ast.FunctionLiteral(Token=self.curToken, Parameters=parameters, Body=body)
+
+        return lit
+
+    def parseFunctionParameters(self) -> List[ast.Identifier]:
+        identifiers: List[ast.Identifier] = []
+
+        if self.peekTokenIs(token.RPAREN):
+            self.nextToken()
+            return identifiers
+
+        self.nextToken()
+
+        ident = ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
+        identifiers.append(ident)
+
+        while self.peekTokenIs(token.COMMA):
+            self.nextToken()
+            self.nextToken()
+            ident = ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
+            identifiers.append(ident)
+
+        if not self.expectPeek(token.RPAREN):
+            return identifiers
+
+        return identifiers
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -282,6 +320,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerPrefix(token.FALSE, p.parseBoolean)
     p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
     p.registerPrefix(token.IF, p.parseIfExpression)
+    p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
     p.nextToken()
     p.nextToken()
     return p

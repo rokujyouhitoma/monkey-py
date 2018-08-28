@@ -303,3 +303,32 @@ class IfExpression(Node, Expression):
             out.append('else ')
             out.append(self.Alternative.String())
         return ''.join(out)
+
+
+@dataclass
+class FunctionLiteral(Node, Expression):
+    Token: token.Token
+    Parameters: List[Identifier]
+    Body: BlockStatement
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        out: List[str] = []
+        params: List[str] = []
+        for p in self.Parameters:
+            params.append(p.String())
+        out.append(self.TokenLiteral())
+        out.append('(')
+        out.append(','.join(params))
+        out.append(')')
+        out.append(self.Body.String())
+        return ''.join(out)

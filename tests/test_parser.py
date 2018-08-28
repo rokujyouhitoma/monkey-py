@@ -325,6 +325,73 @@ let foobar = 838383;
         if not exp.Alternative:
             self.fail('exp.Alternative.Statements was not nil. got=%s' % exp.Alternative)
 
+    def test_function_literal_parsing(self):
+        input = 'fn(x, y) { x + y; }'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        if len(program.Statements) != 1:
+            self.fail('program.Statements does not contain %s statements. got=%s\n' %
+                      (1, len(program.Statements)))
+
+        stmt = program.Statements[0]
+        if not stmt:
+            self.fail('program.Statements[0] is not ast.ExpressionStatement. got=%s' %
+                      program.Statements[0])
+
+        function = stmt.ExpressionValue
+        if not function:
+            self.fail('stmt.Expression is not ast.FunctionLiteral. got=%s' % stmt.ExpressionValue)
+
+        if len(function.Parameters) != 2:
+            self.fail(
+                'function literal parameters wrong. want 2, got=%s\n' % len(function.Parameters))
+
+        testLiteralExpression(self, function.Parameters[0], 'x')
+        testLiteralExpression(self, function.Parameters[1], 'y')
+
+        if len(function.Body.Statements) != 1:
+            self.fail('function.Body.Statements has not 1 statements. got=%s\n' % len(
+                function.Body.Statements))
+
+        bodyStmt = function.Body.Statements[0]
+        if not bodyStmt:
+            self.fail('function body stmt is not ast.ExpressionStatement. got=%s' %
+                      function.Body.Statements[0])
+
+        testInfixExpression(self, bodyStmt.ExpressionValue, 'x', '+', 'y')
+
+    def test_function_parameter_parsing(self):
+        @dataclass
+        class Test():
+            input: str
+            expectedParams: List[str]
+
+        tests: List[Test] = [
+            Test(input='fn() {};', expectedParams=[]),
+            Test(input='fn(x) {};', expectedParams=['x']),
+            Test(input='fn(x, y, z) {};', expectedParams=['x', 'y', 'z']),
+        ]
+
+        for tt in tests:
+            lex = lexer.New(tt.input)
+            p = parser.New(lex)
+            program = p.ParseProgram()
+            checkParserErrors(self, p)
+
+            stmt = program.Statements[0]
+            function = stmt.ExpressionValue
+
+            if len(function.Parameters) != len(tt.expectedParams):
+                self.fail('length parameters wrong. want %d, got=%s\n' % (len(tt.expectedParams),
+                                                                          len(function.Parameters)))
+
+            for i, ident in enumerate(tt.expectedParams):
+                testLiteralExpression(self, function.Parameters[i], ident)
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':
