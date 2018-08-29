@@ -332,3 +332,31 @@ class FunctionLiteral(Node, Expression):
         out.append(')')
         out.append(self.Body.String())
         return ''.join(out)
+
+
+@dataclass
+class CallExpression(Node, Expression):
+    Token: token.Token
+    Function: Expression
+    Arguments: List[Expression]
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        out: List[str] = []
+        args: List[str] = []
+        for a in self.Arguments:
+            args.append(a.String())
+        out.append(self.Function.String())
+        out.append('(')
+        out.append(', '.join(args))
+        out.append(')')
+        return ''.join(out)

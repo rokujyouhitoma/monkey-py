@@ -217,6 +217,10 @@ let foobar = 838383;
             Test('2 / (5 + 5)', '(2 / (5 + 5))'),
             Test('-(5 + 5)', '(-(5 + 5))'),
             Test('!(true == true)', '(!(true == true))'),
+            Test('a + add(b * c) + d', '((a + add((b * c))) + d)'),
+            Test('add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))',
+                 'add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))'),
+            Test('add(a + b + c * d / f + g)', 'add((((a + b) + ((c * d) / f)) + g))'),
         ]
 
         for tt in tests:
@@ -391,6 +395,36 @@ let foobar = 838383;
 
             for i, ident in enumerate(tt.expectedParams):
                 testLiteralExpression(self, function.Parameters[i], ident)
+
+    def test_call_expression_parsing(self):
+        input = 'add(1, 2 * 3, 4 + 5);'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        if len(program.Statements) != 1:
+            self.fail('program.Statements does not contain %s statements. got=%s\n' %
+                      (1, len(program.Statements)))
+
+        stmt = program.Statements[0]
+        if not stmt:
+            self.fail('stmt is not ast.ExpressionStatement. got=%s' % program.Statements[0])
+
+        exp = stmt.ExpressionValue
+        if not exp:
+            self.fail('stmt.Expression is not ast.CallExpression. got=%s' % exp)
+
+        if not testIdentifier(self, exp.Function, 'add'):
+            return
+
+        if len(exp.Arguments) != 3:
+            self.fail('wrong length of arguments. got=%s' % len(exp.Arguments))
+
+        testLiteralExpression(self, exp.Arguments[0], 1)
+        testInfixExpression(self, exp.Arguments[1], 2, '*', 3)
+        testInfixExpression(self, exp.Arguments[2], 4, '+', 5)
 
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:

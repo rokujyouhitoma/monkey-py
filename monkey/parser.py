@@ -25,6 +25,7 @@ precedences: Dict[str, int] = {
     token.MINUS.TypeName: SUM,
     token.SLASH.TypeName: PRODUCT,
     token.ASTERISK.TypeName: PRODUCT,
+    token.LPAREN.TypeName: CALL,
 }
 
 
@@ -253,6 +254,35 @@ class Parser():
 
         return identifiers
 
+    def parseCallExpression(self, function: ast.Expression) -> Optional[ast.Expression]:
+        arguments = self.parseCallArguments()
+        exp = ast.CallExpression(Token=self.curToken, Function=function, Arguments=arguments)
+        return exp
+
+    def parseCallArguments(self) -> List[ast.Expression]:
+        args: List[ast.Expression] = []
+
+        if self.peekTokenIs(token.RPAREN):
+            self.nextToken()
+            return args
+
+        self.nextToken()
+        exp = self.parseExpression(LOWEST)
+        if exp:
+            args.append(exp)
+
+        while self.peekTokenIs(token.COMMA):
+            self.nextToken()
+            self.nextToken()
+            exp = self.parseExpression(LOWEST)
+            if exp:
+                args.append(exp)
+
+        if not self.expectPeek(token.RPAREN):
+            return []
+
+        return args
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -321,6 +351,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
     p.registerPrefix(token.IF, p.parseIfExpression)
     p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
+    p.registerInfix(token.LPAREN, p.parseCallExpression)
     p.nextToken()
     p.nextToken()
     return p

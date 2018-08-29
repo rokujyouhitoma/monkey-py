@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.29
+
+ - 2.8: P104-109 Parserの改善。呼び出し式（CallExpression）のサポート
+
 ## 2018.08.28
 
  - 2.8: P99-104 Parserの改善。関数リテラル（FunctionLiteral）のサポート
