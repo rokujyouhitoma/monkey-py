@@ -64,31 +64,42 @@ class Parser():
             return self.parseExpressionStatement()
 
     def parseLetStatement(self) -> Optional[ast.LetStatement]:
-        stmt = ast.LetStatement(
-            Token=self.curToken,
-            Name=ast.Identifier(Token=self.curToken, Value=self.curToken.Literal),
-            Value=ast.Identifier(Token=self.curToken, Value=self.curToken.Literal))
+        curToken = self.curToken
 
         if not self.expectPeek(token.IDENT):
             return None
 
-        stmt.Name = ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
+        name = ast.Identifier(Token=self.curToken, Value=self.curToken.Literal)
 
         if not self.expectPeek(token.ASSIGN):
             return None
 
+        self.nextToken()
+
+        value = self.parseExpression(LOWEST)
+        if not value:
+            return None
+
+        stmt = ast.LetStatement(Token=curToken, Name=name, Value=value)
+
+        # TODO: if self.peekTokenIs(token.SEMICOLON):
         while not self.curTokenIs(token.SEMICOLON):
             self.nextToken()
 
         return stmt
 
     def parseReturnStatement(self) -> Optional[ast.ReturnStatement]:
-        stmt = ast.ReturnStatement(
-            Token=self.curToken,
-            ReturnValue=ast.Identifier(Token=self.curToken, Value=self.curToken.Literal))
+        curToken = self.curToken
 
         self.nextToken()
 
+        returnValue = self.parseExpression(LOWEST)
+        if not returnValue:
+            return None
+
+        stmt = ast.ReturnStatement(Token=curToken, ReturnValue=returnValue)
+
+        # TODO: if self.peekTokenIs(token.SEMICOLON):
         while not self.curTokenIs(token.SEMICOLON):
             self.nextToken()
 

@@ -31,32 +31,41 @@ return 993322;
                     'returnStmt.TokenLiteral not \'return\', got %s' % returnStmt.TokenLiteral())
 
     def test_let_statements(self):
-        input = '''
-let x = 5;
-let y = 10;
-let foobar = 838383;
-'''
-        lex = lexer.New(input)
-        p = parser.New(lex)
+        @dataclass
+        class Test():
+            input: str
+            expectedIdentifier: str
+            expectedValue: Any
 
-        program = p.ParseProgram()
-        checkParserErrors(self, p)
-        if program is None:
-            self.fail('ParseProgram() returned None')
-        if len(program.Statements) != 3:
-            self.fail('program.Statements does not contain 3 statements. got=%s' % len(
-                program.Statements))
-
-        tests = [
-            ['x'],
-            ['y'],
-            ['foobar'],
+        tests: List[Test] = [
+            Test('let x = 5;', 'x', 5),
+            Test('let y = true;', 'y', True),
+            Test('let foobar = y;', 'foobar', 'y'),
         ]
 
-        for i, tt in enumerate(tests):
-            stmt = program.Statements[i]
-            if not testLetStatement(self, stmt, tt[0]):
-                return
+        # let x = 5;
+        # let y = 10;
+        # let foobar = 838383;
+
+        for tt in tests:
+            lex = lexer.New(tt.input)
+            p = parser.New(lex)
+            program = p.ParseProgram()
+            checkParserErrors(self, p)
+
+            if program is None:
+                self.fail('ParseProgram() returned None')
+            if len(program.Statements) != 1:
+                self.fail('program.Statements does not contain 1 statements. got=%s' % len(
+                    program.Statements))
+
+            stmt = program.Statements[0]
+            if not testLetStatement(self, stmt, tt.expectedIdentifier):
+                continue
+
+            val = stmt.Value
+            if not testLiteralExpression(self, val, tt.expectedValue):
+                continue
 
     def test_identifier_expression(self):
         input = 'foobar;'
