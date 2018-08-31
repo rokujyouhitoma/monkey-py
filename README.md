@@ -16,12 +16,13 @@
 
 ## 2018.08.31
 
- - 3.4.1: P121-122 Object
+ - 3.4.2: P122 Eval。Integer
+ - 3.4.1: P121-122 Eval。Object
  - 2.9: P112-113 REPLの改善。RPPL(Read, Parse, Print, Loop)
 
 ## 2018.08.30
 
- - 2.8.6: P.109-111 Parserの改善。
+ - 2.8.6: P109-111 Parserの改善。
 
 ## 2018.08.29
 
