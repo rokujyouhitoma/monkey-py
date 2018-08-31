@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.08.31
+
+ - 2.9: P.112-113 REPLの改善。RPPL(Read, Parse, Print, Loop)
+
 ## 2018.08.30
 
  - 2.8.6: P.109-111 Parserの改善。

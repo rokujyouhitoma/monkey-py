@@ -1,5 +1,6 @@
-from monkey import token
-from monkey.lexer import New
+from typing import List
+
+from monkey import lexer, parser
 
 PROMPT = '>> '
 
@@ -7,8 +8,17 @@ PROMPT = '>> '
 def Start() -> None:
     while True:
         line = input(PROMPT)
-        lexer = New(line)
-        tok = lexer.NextToken()
-        while tok.Type != token.EOF:
-            print(tok)
-            tok = lexer.NextToken()
+        lex = lexer.New(line)
+        p = parser.New(lex)
+
+        program = p.ParseProgram()
+        if len(p.Errors()) is not 0:
+            printParserErrors(p.Errors())
+            continue
+
+        print(program.String())
+
+
+def printParserErrors(errors: List[str]) -> None:
+    for msg in errors:
+        print('\t' + msg)
