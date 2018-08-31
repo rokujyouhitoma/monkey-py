@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 INTEGER_OBJ = 'INTEGER'
 BOOLEAN_OBJ = 'BOOLEAN'
+NULL_OBJ = 'NULL'
 
 
 @dataclass
@@ -52,3 +53,14 @@ class Boolean(ObjectInterface):
     @property
     def Inspect(self) -> str:
         return str(self.Value)
+
+
+@dataclass
+class Null(ObjectInterface):
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(NULL_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        return NULL_OBJ

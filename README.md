@@ -16,6 +16,7 @@
 
 ## 2018.08.31
 
+ - 3.4.4: P123-124 Eval。null
  - 3.4.3: P123 Eval。Boolean
  - 3.4.2: P122 Eval。Integer
  - 3.4.1: P121-122 Eval。Object
