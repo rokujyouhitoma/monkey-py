@@ -7,7 +7,15 @@ PROMPT = '>> '
 
 def Start() -> None:
     while True:
-        line = input(PROMPT)
+        try:
+            line = input(PROMPT)
+        except KeyboardInterrupt:
+            print('\nKeyboardInterrupt')
+            continue
+
+        if line == 'exit()':
+            break
+
         lex = lexer.New(line)
         p = parser.New(lex)
 
