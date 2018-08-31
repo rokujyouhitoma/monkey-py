@@ -11,7 +11,7 @@ class ObjectType:
     TypeName: str
 
 
-class ObjectInterface:
+class Object:
     @property
     @abstractmethod
     def Type(self) -> ObjectType:
@@ -24,13 +24,7 @@ class ObjectInterface:
 
 
 @dataclass
-class Object(ObjectInterface):
-    Type: ObjectType
-    Inspect: str
-
-
-@dataclass
-class Integer(ObjectInterface):
+class Integer(Object):
     Value: int
 
     @property
@@ -43,7 +37,7 @@ class Integer(ObjectInterface):
 
 
 @dataclass
-class Boolean(ObjectInterface):
+class Boolean(Object):
     Value: bool
 
     @property
@@ -56,7 +50,7 @@ class Boolean(ObjectInterface):
 
 
 @dataclass
-class Null(ObjectInterface):
+class Null(Object):
     @property
     def Type(self) -> ObjectType:
         return ObjectType(NULL_OBJ)
