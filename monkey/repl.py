@@ -1,6 +1,6 @@
 from typing import List
 
-from monkey import lexer, parser
+from monkey import evaluator, lexer, parser
 
 PROMPT = '>> '
 
@@ -24,7 +24,9 @@ def Start() -> None:
             printParserErrors(p.Errors())
             continue
 
-        print(program.String())
+        evaluated = evaluator.Eval(program)
+        if evaluated:
+            print(evaluated.Inspect)
 
 
 def printParserErrors(errors: List[str]) -> None:

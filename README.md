@@ -16,6 +16,7 @@
 
 ## 2018.08.31
 
+ - 3.5.2: P128-129 REPL(Read, Eval, Print, Loop)
  - 3.5.1. P124-128 Eval。IntegerLiteral
  - 3.4.4: P123-124 Eval。null
  - 3.4.3: P123 Eval。Boolean
