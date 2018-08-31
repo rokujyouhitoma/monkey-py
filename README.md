@@ -2,7 +2,7 @@
  - oreilly-978-4-87311-822-2e.pdf
 
 # Requirements
-
+  
  - Python3.7.0
 
 # Tools
@@ -16,7 +16,8 @@
 
 ## 2018.08.31
 
- - 2.9: P.112-113 REPLの改善。RPPL(Read, Parse, Print, Loop)
+ - 3.4.1: P121-122 Object
+ - 2.9: P112-113 REPLの改善。RPPL(Read, Parse, Print, Loop)
 
 ## 2018.08.30
 
