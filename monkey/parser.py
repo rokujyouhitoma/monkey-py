@@ -82,8 +82,7 @@ class Parser():
 
         stmt = ast.LetStatement(Token=curToken, Name=name, Value=value)
 
-        # TODO: if self.peekTokenIs(token.SEMICOLON):
-        while not self.curTokenIs(token.SEMICOLON):
+        if self.peekTokenIs(token.SEMICOLON):
             self.nextToken()
 
         return stmt
