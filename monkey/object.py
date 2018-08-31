@@ -1,7 +1,8 @@
 from abc import abstractmethod
 from dataclasses import dataclass
 
-INTEGER_OBJ = "INTEGER"
+INTEGER_OBJ = 'INTEGER'
+BOOLEAN_OBJ = 'BOOLEAN'
 
 
 @dataclass
@@ -34,6 +35,19 @@ class Integer(ObjectInterface):
     @property
     def Type(self) -> ObjectType:
         return ObjectType(INTEGER_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        return str(self.Value)
+
+
+@dataclass
+class Boolean(ObjectInterface):
+    Value: bool
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(BOOLEAN_OBJ)
 
     @property
     def Inspect(self) -> str:

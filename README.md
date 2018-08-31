@@ -16,6 +16,7 @@
 
 ## 2018.08.31
 
+ - 3.4.3: P123 Eval。Boolean
  - 3.4.2: P122 Eval。Integer
  - 3.4.1: P121-122 Eval。Object
  - 2.9: P112-113 REPLの改善。RPPL(Read, Parse, Print, Loop)
