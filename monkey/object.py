@@ -12,13 +12,13 @@ class ObjectType:
 
 
 class ObjectInterface:
-    @abstractmethod
     @property
+    @abstractmethod
     def Type(self) -> ObjectType:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def Inspect(self) -> str:
         pass
 
