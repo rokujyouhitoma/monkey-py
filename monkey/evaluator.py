@@ -20,6 +20,11 @@ def Eval(node: Any) -> Optional[object.Object]:
         right = Eval(node.Right)
         evaluated = evalPrefixExpression(node.Operator, right)
         return evaluated
+    elif type(node) == ast.InfixExpression:
+        left = Eval(node.Left)
+        right = Eval(node.Right)
+        evaluated = evalInfixExpression(node.Operator, left, right)
+        return evaluated
     return None
 
 
@@ -58,6 +63,46 @@ def evalMinusPrefixOperatorExpression(right: Optional[object.Object]) -> object.
 
     value = right.Value
     return object.Integer(Value=-value)
+
+
+def evalInfixExpression(operator: str, left: Optional[object.Object],
+                        right: Optional[object.Object]) -> object.Object:
+    if not right:
+        return NULL
+    if not left:
+        return NULL
+    if left.Type.TypeName == object.INTEGER_OBJ and right.Type.TypeName == object.INTEGER_OBJ:
+        return evalIntegerInfixExpression(operator, left, right)
+    elif operator == '==':
+        return nativeBoolToBooleanObject(left == right)
+    elif operator == '!=':
+        return nativeBoolToBooleanObject(left != right)
+    else:
+        return NULL
+
+
+def evalIntegerInfixExpression(operator: str, left: object.Object,
+                               right: object.Object) -> object.Object:
+    leftVal = left.Value
+    rightVal = right.Value
+    if operator == '+':
+        return object.Integer(Value=leftVal + rightVal)
+    elif operator == '-':
+        return object.Integer(Value=leftVal - rightVal)
+    elif operator == '*':
+        return object.Integer(Value=leftVal * rightVal)
+    elif operator == '/':
+        return object.Integer(Value=leftVal / rightVal)
+    elif operator == '<':
+        return nativeBoolToBooleanObject(leftVal < rightVal)
+    elif operator == '>':
+        return nativeBoolToBooleanObject(leftVal > rightVal)
+    elif operator == '==':
+        return nativeBoolToBooleanObject(leftVal == rightVal)
+    elif operator == '!=':
+        return nativeBoolToBooleanObject(leftVal != rightVal)
+    else:
+        return NULL
 
 
 def nativeBoolToBooleanObject(input: bool) -> object.Boolean:

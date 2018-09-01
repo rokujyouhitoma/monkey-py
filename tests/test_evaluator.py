@@ -17,6 +17,17 @@ class TestEvaluator(unittest.TestCase):
             Test('10', 10),
             Test('-5', -5),
             Test('-10', -10),
+            Test('5 + 5 + 5 + 5 - 10', 10),
+            Test('2 * 2 * 2 * 2 * 2', 32),
+            Test('-50 + 100 + -50', 0),
+            Test('5 * 2 + 10', 20),
+            Test('5 + 2 * 10', 25),
+            Test('20 + 2 * -10', 0),
+            Test('50 / 2 * 2 + 10', 60),
+            Test('2 * (5 + 10)', 30),
+            Test('3 * 3 * 3 + 10', 37),
+            Test('3 * (3 * 3) + 10', 37),
+            Test('(5 + 10 * 2 + 15 / 3) * 2 + -10', 50),
         ]
 
         for tt in tests:
@@ -32,6 +43,23 @@ class TestEvaluator(unittest.TestCase):
         tests: List[Test] = [
             Test('true', True),
             Test('false', False),
+            Test('1 < 2', True),
+            Test('1 > 2', False),
+            Test('1 < 1', False),
+            Test('1 > 1', False),
+            Test('1 == 1', True),
+            Test('1 != 1', False),
+            Test('1 == 2', False),
+            Test('1 != 2', True),
+            Test('true == true', True),
+            Test('false == false', True),
+            Test('true == false', False),
+            Test('true != false', True),
+            Test('false != true', True),
+            Test('(1 < 2) == true', True),
+            Test('(1 < 2) == false', False),
+            Test('(1 > 2) == true', False),
+            Test('(1 > 2) == false', True),
         ]
 
         for tt in tests:
