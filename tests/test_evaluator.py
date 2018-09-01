@@ -15,6 +15,8 @@ class TestEvaluator(unittest.TestCase):
         tests: List[Test] = [
             Test('5', 5),
             Test('10', 10),
+            Test('-5', -5),
+            Test('-10', -10),
         ]
 
         for tt in tests:
@@ -30,6 +32,25 @@ class TestEvaluator(unittest.TestCase):
         tests: List[Test] = [
             Test('true', True),
             Test('false', False),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            testBooleanObject(self, evaluated, tt.expected)
+
+    def test_bang_operator(self):
+        @dataclass
+        class Test():
+            input: str
+            expected: bool
+
+        tests: List[Test] = [
+            Test('!true', False),
+            Test('!false', True),
+            Test('!5', False),
+            Test('!!true', True),
+            Test('!!false', False),
+            Test('!!5', True),
         ]
 
         for tt in tests:

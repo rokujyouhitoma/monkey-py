@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
+from typing import Any
 
 INTEGER_OBJ = 'INTEGER'
 BOOLEAN_OBJ = 'BOOLEAN'
@@ -12,6 +13,8 @@ class ObjectType:
 
 
 class Object:
+    Value: Any
+
     @property
     @abstractmethod
     def Type(self) -> ObjectType:

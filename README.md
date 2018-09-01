@@ -16,6 +16,7 @@
 
 ## 2018.09.01
 
+ - 3.5.5: P131-135 Eval. BangOperator
  - 3.5.4: P131 Eval. null
  - 3.5.3: P129-131 Eval. Boolean Literal
  - Refactoring test case
