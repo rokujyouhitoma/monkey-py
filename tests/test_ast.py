@@ -1,17 +1,16 @@
 import unittest
 
-from monkey import token
-from monkey.ast import Identifier, LetStatement, Program
+from monkey import ast, token
 
 
 class TestAst(unittest.TestCase):
     def test_string(self):
-        program = Program(Statements=[
-            LetStatement(
+        program = ast.Program(Statements=[
+            ast.LetStatement(
                 Token=token.Token(Type=token.LET, Literal='let'),
-                Name=Identifier(
+                Name=ast.Identifier(
                     Token=token.Token(Type=token.IDENT, Literal='myVar'), Value='myVar'),
-                Value=Identifier(
+                Value=ast.Identifier(
                     Token=token.Token(Type=token.IDENT, Literal='anotherVar'), Value='anotherVar'))
         ])
 

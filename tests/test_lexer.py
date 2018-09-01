@@ -1,7 +1,6 @@
 import unittest
 
-from monkey import token
-from monkey.lexer import New
+from monkey import lexer, token
 
 
 class TestLexer(unittest.TestCase):
@@ -103,10 +102,10 @@ if (5 < 10) {
             [token.EOF, ''],
         ]
 
-        lexer = New(input)
+        lex = lexer.New(input)
 
         for i, tt in enumerate(tests):
-            tok = lexer.NextToken()
+            tok = lex.NextToken()
             if tok.Type != tt[0]:
                 self.fail('tests[%d] - tokentype wrong. expected=\'%s\', got=\'%s\'' % (i, tt[0],
                                                                                         tok.Type))

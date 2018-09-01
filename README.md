@@ -18,6 +18,7 @@
 
  - 3.5.4: P131 Eval. null
  - 3.5.3: P129-131 Eval. Boolean Literal
+ - Refactoring test case
 
 ## 2018.08.31
 
