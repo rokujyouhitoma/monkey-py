@@ -53,7 +53,7 @@ class Boolean(Object):
 class Null(Object):
     @property
     def Type(self) -> ObjectType:
-        return ObjectType(NULLy_OBJ)
+        return ObjectType(NULL_OBJ)
 
     @property
     def Inspect(self) -> str:
