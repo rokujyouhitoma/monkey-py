@@ -21,6 +21,21 @@ class TestEvaluator(unittest.TestCase):
             evaluated = testEval(tt.input)
             testIntegerObject(self, evaluated, tt.expected)
 
+    def test_eval_boolean_expression(self):
+        @dataclass
+        class Test():
+            input: str
+            expected: bool
+
+        tests: List[Test] = [
+            Test('true', True),
+            Test('false', False),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            testBooleanObject(self, evaluated, tt.expected)
+
 
 def testEval(input: str) -> object.Object:
     lex = lexer.New(input)
@@ -33,6 +48,19 @@ def testIntegerObject(self, obj: object.Object, expected: int) -> bool:
     result = obj
     if not result:
         self.fail('object is not Integer. got=%s (%s)' % (obj, obj))
+        return False
+
+    if result.Value != expected:
+        self.fail('object has wrong value. got=%s, want=%s' % (result.Value, expected))
+        return False
+
+    return True
+
+
+def testBooleanObject(self, obj: object.Object, expected: bool) -> bool:
+    result = obj
+    if not result:
+        self.fail('object is not Boolean. got=%s (%s)' % (obj, obj))
         return False
 
     if result.Value != expected:

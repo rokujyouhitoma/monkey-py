@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.01
+
+ - 3.5.3: P129-131 Boolean Literal
+
 ## 2018.08.31
 
  - 3.5.2: P128-129 REPL(Read, Eval, Print, Loop)
