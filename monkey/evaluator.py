@@ -2,6 +2,7 @@ from typing import Any, List, Optional
 
 from monkey import ast, object
 
+NULL = object.Null()
 TRUE = object.Boolean(Value=True)
 FALSE = object.Boolean(Value=False)
 

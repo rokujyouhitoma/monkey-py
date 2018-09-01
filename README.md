@@ -16,7 +16,8 @@
 
 ## 2018.09.01
 
- - 3.5.3: P129-131 Boolean Literal
+ - 3.5.4: P131 Eval. null
+ - 3.5.3: P129-131 Eval. Boolean Literal
 
 ## 2018.08.31
 
