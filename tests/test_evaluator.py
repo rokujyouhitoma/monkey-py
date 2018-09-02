@@ -1,6 +1,6 @@
 import unittest
 from dataclasses import dataclass
-from typing import List
+from typing import Any, List
 
 from monkey import evaluator, lexer, object, parser
 
@@ -84,6 +84,37 @@ class TestEvaluator(unittest.TestCase):
         for tt in tests:
             evaluated = testEval(tt.input)
             testBooleanObject(self, evaluated, tt.expected)
+
+    def test_if_else_expressions(self):
+        @dataclass
+        class Test():
+            input: str
+            expected: Any
+
+        tests: List[Test] = [
+            Test('if (true) { 10 }', 10),
+            Test('if (false) { 10 }', None),
+            Test('if (1) { 10 }', 10),
+            Test('if (1 < 2) { 10 }', 10),
+            Test('if (1 > 2) { 10 }', None),
+            Test('if (1 > 2) { 10 } else { 20 }', 20),
+            Test('if (1 < 2) { 10 } else { 20 }', 10),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            integer = tt.expected
+            if integer:
+                testIntegerObject(self, evaluated, int(integer))
+            else:
+                testNullObject(self, evaluated)
+
+
+def testNullObject(self, obj: object.Object) -> bool:
+    if obj != evaluator.NULL:
+        self.fail('object is not NULL. got=%s (%s)' % (obj, obj))
+        return False
+    return True
 
 
 def testEval(input: str) -> object.Object:

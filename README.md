@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.02
+
+ - 3.6: P141-144 Eval. IfExpression
+
 ## 2018.09.01
 
  - 3.5.6: P135-141 Eval. InfixExpression
