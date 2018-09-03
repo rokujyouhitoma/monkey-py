@@ -9,7 +9,7 @@ FALSE = object.Boolean(Value=False)
 
 def Eval(node: Any) -> Optional[object.Object]:
     if type(node) == ast.Program:
-        return evalStatements(node.Statements)
+        return evalProgram(node)
     elif type(node) == ast.ExpressionStatement:
         return Eval(node.ExpressionValue)
     elif type(node) == ast.IntegerLiteral:
@@ -26,9 +26,15 @@ def Eval(node: Any) -> Optional[object.Object]:
         evaluated = evalInfixExpression(node.Operator, left, right)
         return evaluated
     elif type(node) == ast.BlockStatement:
-        return evalStatements(node.Statements)
+        return evalBlockStatement(node)
     elif type(node) == ast.IfExpression:
         return evalIfExpression(node)
+    elif type(node) == ast.ReturnStatement:
+        val = Eval(node.ReturnValue)
+        if val:
+            return object.ReturnValue(Value=val)
+        else:
+            return None
     return None
 
 
@@ -36,6 +42,10 @@ def evalStatements(stmts: List[ast.Statement]) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in stmts:
         result = Eval(statement)
+        if type(result) == object.ReturnValue:
+            returnValue = result
+            if returnValue:
+                return returnValue.Value
     return result
 
 
@@ -129,6 +139,27 @@ def evalIfExpression(ie: ast.IfExpression) -> object.Object:
         return evaluated
     else:
         return NULL
+
+
+def evalProgram(program: ast.Program) -> Optional[object.Object]:
+    result: Optional[object.Object]
+    for statement in program.Statements:
+        result = Eval(statement)
+        if type(result) == object.ReturnValue:
+            if result is not None:
+                return result.Value
+
+    return result
+
+
+def evalBlockStatement(block: ast.BlockStatement) -> Optional[object.Object]:
+    result: Optional[object.Object]
+    for statement in block.Statements:
+        result = Eval(statement)
+        if result is not None and result.Type.TypeName == object.RETURN_VALUE_OBJ:
+            return result
+
+    return result
 
 
 def isTruthy(obj: object.Object) -> bool:

@@ -109,6 +109,32 @@ class TestEvaluator(unittest.TestCase):
             else:
                 testNullObject(self, evaluated)
 
+    def test_return_statements(self):
+        @dataclass
+        class Test():
+            input: str
+            expected: int
+
+        tests: List[Test] = [
+            Test('return 10;', 10),
+            Test('return 10; 9;', 10),
+            Test('return 2 * 5; 9;', 10),
+            Test('9; return 2 * 5; 9;', 10),
+            Test(
+                '''
+            if (10 > 1) {
+              if (10 > 1) {
+                return 10;
+              }
+              return 1;
+            }
+            ''', 10),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            testIntegerObject(self, evaluated, tt.expected)
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:

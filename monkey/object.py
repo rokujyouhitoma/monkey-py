@@ -5,6 +5,7 @@ from typing import Any
 INTEGER_OBJ = 'INTEGER'
 BOOLEAN_OBJ = 'BOOLEAN'
 NULL_OBJ = 'NULL'
+RETURN_VALUE_OBJ = 'RETURN_VALUE'
 
 
 @dataclass
@@ -61,3 +62,16 @@ class Null(Object):
     @property
     def Inspect(self) -> str:
         return NULL_OBJ
+
+
+@dataclass
+class ReturnValue(Object):
+    Value: Object
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(RETURN_VALUE_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        return self.Value.Inspect

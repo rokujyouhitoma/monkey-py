@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.03
+
+ - 3.7: P144-149 Eval. Return statements
+
 ## 2018.09.02
 
  - 3.6: P141-144 Eval. IfExpression
