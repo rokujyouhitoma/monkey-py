@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.04
+
+ - 3.8: P149-154 Eval. Error for debug
+
 ## 2018.09.03
 
  - 3.7: P144-149 Eval. Return statements

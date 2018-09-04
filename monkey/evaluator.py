@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 from monkey import ast, object
 
@@ -18,11 +18,23 @@ def Eval(node: Any) -> Optional[object.Object]:
         return nativeBoolToBooleanObject(node.Value)
     elif type(node) == ast.PrefixExpression:
         right = Eval(node.Right)
-        evaluated = evalPrefixExpression(node.Operator, right)
-        return evaluated
+        if right:
+            if isError(right):
+                return right
+            return evalPrefixExpression(node.Operator, right)
+        else:
+            return None
     elif type(node) == ast.InfixExpression:
         left = Eval(node.Left)
+        if not left:
+            return None
+        if isError(left):
+            return left
         right = Eval(node.Right)
+        if not right:
+            return None
+        if isError(right):
+            return right
         evaluated = evalInfixExpression(node.Operator, left, right)
         return evaluated
     elif type(node) == ast.BlockStatement:
@@ -32,6 +44,8 @@ def Eval(node: Any) -> Optional[object.Object]:
     elif type(node) == ast.ReturnStatement:
         val = Eval(node.ReturnValue)
         if val:
+            if isError(val):
+                return val
             return object.ReturnValue(Value=val)
         else:
             return None
@@ -49,13 +63,13 @@ def evalStatements(stmts: List[ast.Statement]) -> Optional[object.Object]:
     return result
 
 
-def evalPrefixExpression(operator: str, right: Optional[object.Object]) -> object.Object:
+def evalPrefixExpression(operator: str, right: object.Object) -> object.Object:
     if operator == '!':
         return evalBangOperatorExpression(right)
     if operator == '-':
         return evalMinusPrefixOperatorExpression(right)
     else:
-        return NULL
+        return newError('unknown operator: %s%s', (operator, right.Type.TypeName))
 
 
 def evalBangOperatorExpression(right: Optional[object.Object]) -> object.Object:
@@ -73,26 +87,25 @@ def evalMinusPrefixOperatorExpression(right: Optional[object.Object]) -> object.
     if not right:
         return NULL
     if right.Type.TypeName != object.INTEGER_OBJ:
-        return NULL
+        return newError('unknown operator: -%s', (right.Type.TypeName, ))
 
     value = right.Value
     return object.Integer(Value=-value)
 
 
-def evalInfixExpression(operator: str, left: Optional[object.Object],
-                        right: Optional[object.Object]) -> object.Object:
-    if not right:
-        return NULL
-    if not left:
-        return NULL
+def evalInfixExpression(operator: str, left: object.Object, right: object.Object) -> object.Object:
     if left.Type.TypeName == object.INTEGER_OBJ and right.Type.TypeName == object.INTEGER_OBJ:
         return evalIntegerInfixExpression(operator, left, right)
     elif operator == '==':
         return nativeBoolToBooleanObject(left == right)
     elif operator == '!=':
         return nativeBoolToBooleanObject(left != right)
+    elif left.Type.TypeName != right.Type.TypeName:
+        return newError('type mismatch: %s %s %s',
+                        (left.Type.TypeName, operator, right.Type.TypeName))
     else:
-        return NULL
+        return newError('unknown operator: %s %s %s',
+                        (left.Type.TypeName, operator, right.Type.TypeName))
 
 
 def evalIntegerInfixExpression(operator: str, left: object.Object,
@@ -116,13 +129,16 @@ def evalIntegerInfixExpression(operator: str, left: object.Object,
     elif operator == '!=':
         return nativeBoolToBooleanObject(leftVal != rightVal)
     else:
-        return NULL
+        return newError('unknown operator: %s %s %s',
+                        (left.Type.TypeName, operator, right.Type.TypeName))
 
 
 def evalIfExpression(ie: ast.IfExpression) -> object.Object:
     condition = Eval(ie.Condition)
     if not condition:
         return NULL
+    if isError(condition):
+        return condition
     if isTruthy(condition):
         if not ie.Consequence:
             return NULL
@@ -148,6 +164,8 @@ def evalProgram(program: ast.Program) -> Optional[object.Object]:
         if type(result) == object.ReturnValue:
             if result is not None:
                 return result.Value
+        elif type(result) == object.Error:
+            return result
 
     return result
 
@@ -156,8 +174,11 @@ def evalBlockStatement(block: ast.BlockStatement) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in block.Statements:
         result = Eval(statement)
-        if result is not None and result.Type.TypeName == object.RETURN_VALUE_OBJ:
-            return result
+
+        if result is not None:
+            rt = result.Type.TypeName
+            if rt == object.RETURN_VALUE_OBJ or rt == object.ERROR_OBJ:
+                return result
 
     return result
 
@@ -173,5 +194,16 @@ def isTruthy(obj: object.Object) -> bool:
         return True
 
 
+def isError(obj: object.Object) -> bool:
+    if obj is not None:
+        return obj.Type.TypeName == object.ERROR_OBJ
+
+    return False
+
+
 def nativeBoolToBooleanObject(input: bool) -> object.Boolean:
     return TRUE if input else FALSE
+
+
+def newError(template: str, a: Tuple[Any, ...]) -> object.Error:
+    return object.Error(Message=template % a)

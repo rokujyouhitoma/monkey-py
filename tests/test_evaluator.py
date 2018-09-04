@@ -135,6 +135,42 @@ class TestEvaluator(unittest.TestCase):
             evaluated = testEval(tt.input)
             testIntegerObject(self, evaluated, tt.expected)
 
+    def test_error_handling(self):
+        @dataclass
+        class Test():
+            input: str
+            expectedMessage: str
+
+        tests: List[Test] = [
+            Test('5 + true;', 'type mismatch: INTEGER + BOOLEAN'),
+            Test('5 + true; 5;', 'type mismatch: INTEGER + BOOLEAN'),
+            Test('-true', 'unknown operator: -BOOLEAN'),
+            Test('true + false;', 'unknown operator: BOOLEAN + BOOLEAN'),
+            Test('5; true + false; 5', 'unknown operator: BOOLEAN + BOOLEAN'),
+            Test('if (10 > 1) { true + false; }', 'unknown operator: BOOLEAN + BOOLEAN'),
+            Test(
+                '''
+            if (10 > 1) {
+              if (10 > 1) {
+                return true + false;
+              }
+              return 1;
+            }
+            ''', 'unknown operator: BOOLEAN + BOOLEAN'),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            errObj = evaluated
+            if errObj == evaluator.NULL:
+                self.fail('no error object returned. got=%s(%s)' % (evaluated, evaluated))
+                continue
+
+            if errObj.Message != tt.expectedMessage:
+                print(errObj.Message)
+                self.fail('wrong error message. expected=%s, got=%s' % (tt.expectedMessage,
+                                                                        errObj.Message))
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:

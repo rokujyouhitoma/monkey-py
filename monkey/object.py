@@ -6,6 +6,7 @@ INTEGER_OBJ = 'INTEGER'
 BOOLEAN_OBJ = 'BOOLEAN'
 NULL_OBJ = 'NULL'
 RETURN_VALUE_OBJ = 'RETURN_VALUE'
+ERROR_OBJ = 'ERROR'
 
 
 @dataclass
@@ -75,3 +76,16 @@ class ReturnValue(Object):
     @property
     def Inspect(self) -> str:
         return self.Value.Inspect
+
+
+@dataclass
+class Error(Object):
+    Message: str
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(ERROR_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        return 'ERROR: ' + self.Message
