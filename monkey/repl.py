@@ -1,11 +1,12 @@
 from typing import List
 
-from monkey import evaluator, lexer, parser
+from monkey import environment, evaluator, lexer, parser
 
 PROMPT = '>> '
 
 
 def Start() -> None:
+    env = environment.NewEnvironment()
     while True:
         try:
             line = input(PROMPT)
@@ -24,7 +25,7 @@ def Start() -> None:
             printParserErrors(p.Errors())
             continue
 
-        evaluated = evaluator.Eval(program)
+        evaluated = evaluator.Eval(program, env)
         if evaluated:
             print(evaluated.Inspect)
 

@@ -2,7 +2,7 @@ import unittest
 from dataclasses import dataclass
 from typing import Any, List
 
-from monkey import evaluator, lexer, object, parser
+from monkey import environment, evaluator, lexer, object, parser
 
 
 class TestEvaluator(unittest.TestCase):
@@ -157,6 +157,7 @@ class TestEvaluator(unittest.TestCase):
               return 1;
             }
             ''', 'unknown operator: BOOLEAN + BOOLEAN'),
+            Test('foobar', 'identifier not found: foobar'),
         ]
 
         for tt in tests:
@@ -171,6 +172,22 @@ class TestEvaluator(unittest.TestCase):
                 self.fail('wrong error message. expected=%s, got=%s' % (tt.expectedMessage,
                                                                         errObj.Message))
 
+    def test_let_statements(self):
+        @dataclass
+        class Test:
+            input: str
+            expected: int
+
+        tests: List[Test] = [
+            Test('let a = 5; a;', 5),
+            Test('let a = 5 * 5; a;', 25),
+            Test('let a = 5; let b = a; b;', 5),
+            Test('let a = 5; let b = a; let c = a + b + 5; c;', 15),
+        ]
+
+        for tt in tests:
+            testIntegerObject(self, testEval(tt.input), tt.expected)
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:
@@ -183,7 +200,8 @@ def testEval(input: str) -> object.Object:
     lex = lexer.New(input)
     p = parser.New(lex)
     program = p.ParseProgram()
-    return evaluator.Eval(program)
+    env = environment.NewEnvironment()
+    return evaluator.Eval(program, env)
 
 
 def testIntegerObject(self, obj: object.Object, expected: int) -> bool:

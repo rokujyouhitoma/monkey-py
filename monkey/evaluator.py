@@ -1,23 +1,23 @@
 from typing import Any, List, Optional, Tuple
 
-from monkey import ast, object
+from monkey import ast, environment, object
 
 NULL = object.Null()
 TRUE = object.Boolean(Value=True)
 FALSE = object.Boolean(Value=False)
 
 
-def Eval(node: Any) -> Optional[object.Object]:
+def Eval(node: Any, env: environment.Environment) -> Optional[object.Object]:
     if type(node) == ast.Program:
-        return evalProgram(node)
+        return evalProgram(node, env)
     elif type(node) == ast.ExpressionStatement:
-        return Eval(node.ExpressionValue)
+        return Eval(node.ExpressionValue, env)
     elif type(node) == ast.IntegerLiteral:
         return object.Integer(Value=node.Value)
     elif type(node) == ast.Boolean:
         return nativeBoolToBooleanObject(node.Value)
     elif type(node) == ast.PrefixExpression:
-        right = Eval(node.Right)
+        right = Eval(node.Right, env)
         if right:
             if isError(right):
                 return right
@@ -25,12 +25,12 @@ def Eval(node: Any) -> Optional[object.Object]:
         else:
             return None
     elif type(node) == ast.InfixExpression:
-        left = Eval(node.Left)
+        left = Eval(node.Left, env)
         if not left:
             return None
         if isError(left):
             return left
-        right = Eval(node.Right)
+        right = Eval(node.Right, env)
         if not right:
             return None
         if isError(right):
@@ -38,24 +38,35 @@ def Eval(node: Any) -> Optional[object.Object]:
         evaluated = evalInfixExpression(node.Operator, left, right)
         return evaluated
     elif type(node) == ast.BlockStatement:
-        return evalBlockStatement(node)
+        return evalBlockStatement(node, env)
     elif type(node) == ast.IfExpression:
-        return evalIfExpression(node)
+        return evalIfExpression(node, env)
     elif type(node) == ast.ReturnStatement:
-        val = Eval(node.ReturnValue)
+        val = Eval(node.ReturnValue, env)
         if val:
             if isError(val):
                 return val
             return object.ReturnValue(Value=val)
         else:
             return None
+    elif type(node) == ast.LetStatement:
+        val = Eval(node.Value, env)
+        if val:
+            if isError(val):
+                return val
+            env.Set(node.Name.Value, val)
+        else:
+            return None
+    elif type(node) == ast.Identifier:
+        return evalIdentifier(node, env)
     return None
 
 
-def evalStatements(stmts: List[ast.Statement]) -> Optional[object.Object]:
+def evalStatements(stmts: List[ast.Statement],
+                   env: environment.Environment) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in stmts:
-        result = Eval(statement)
+        result = Eval(statement, env)
         if type(result) == object.ReturnValue:
             returnValue = result
             if returnValue:
@@ -133,8 +144,8 @@ def evalIntegerInfixExpression(operator: str, left: object.Object,
                         (left.Type.TypeName, operator, right.Type.TypeName))
 
 
-def evalIfExpression(ie: ast.IfExpression) -> object.Object:
-    condition = Eval(ie.Condition)
+def evalIfExpression(ie: ast.IfExpression, env: environment.Environment) -> object.Object:
+    condition = Eval(ie.Condition, env)
     if not condition:
         return NULL
     if isError(condition):
@@ -142,14 +153,14 @@ def evalIfExpression(ie: ast.IfExpression) -> object.Object:
     if isTruthy(condition):
         if not ie.Consequence:
             return NULL
-        evaluated = Eval(ie.Consequence)
+        evaluated = Eval(ie.Consequence, env)
         if not evaluated:
             return NULL
         return evaluated
     elif ie.Alternative is not None:
         if not ie.Alternative:
             return NULL
-        evaluated = Eval(ie.Alternative)
+        evaluated = Eval(ie.Alternative, env)
         if not evaluated:
             return NULL
         return evaluated
@@ -157,10 +168,10 @@ def evalIfExpression(ie: ast.IfExpression) -> object.Object:
         return NULL
 
 
-def evalProgram(program: ast.Program) -> Optional[object.Object]:
+def evalProgram(program: ast.Program, env: environment.Environment) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in program.Statements:
-        result = Eval(statement)
+        result = Eval(statement, env)
         if type(result) == object.ReturnValue:
             if result is not None:
                 return result.Value
@@ -170,10 +181,11 @@ def evalProgram(program: ast.Program) -> Optional[object.Object]:
     return result
 
 
-def evalBlockStatement(block: ast.BlockStatement) -> Optional[object.Object]:
+def evalBlockStatement(block: ast.BlockStatement,
+                       env: environment.Environment) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in block.Statements:
-        result = Eval(statement)
+        result = Eval(statement, env)
 
         if result is not None:
             rt = result.Type.TypeName
@@ -181,6 +193,14 @@ def evalBlockStatement(block: ast.BlockStatement) -> Optional[object.Object]:
                 return result
 
     return result
+
+
+def evalIdentifier(node: ast.Identifier, env: environment.Environment) -> Optional[object.Object]:
+    val = env.Get(node.Value)
+    if not val:
+        return newError('identifier not found: ' + node.Value, tuple())
+
+    return val
 
 
 def isTruthy(obj: object.Object) -> bool:

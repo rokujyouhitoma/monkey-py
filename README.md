@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.05
+
+ - 3.9: P155-160 Eval. LetStatement(Environment and Bind)
+
 ## 2018.09.04
 
  - 3.8: P149-154 Eval. Error for debug
