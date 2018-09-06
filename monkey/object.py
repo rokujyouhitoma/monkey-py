@@ -1,12 +1,15 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, List
+
+from monkey import ast
 
 INTEGER_OBJ = 'INTEGER'
 BOOLEAN_OBJ = 'BOOLEAN'
 NULL_OBJ = 'NULL'
 RETURN_VALUE_OBJ = 'RETURN_VALUE'
 ERROR_OBJ = 'ERROR'
+FUNCTION_OBJ = 'FUNCTION'
 
 
 @dataclass
@@ -26,6 +29,19 @@ class Object:
     @abstractmethod
     def Inspect(self) -> str:
         pass
+
+
+@dataclass
+class AnyObject(Object):
+    Value: Object
+
+    @property
+    def Type(self) -> ObjectType:
+        return self.Value.Type
+
+    @property
+    def Inspect(self) -> str:
+        return self.Value.Inspect
 
 
 @dataclass
@@ -89,3 +105,31 @@ class Error(Object):
     @property
     def Inspect(self) -> str:
         return 'ERROR: ' + self.Message
+
+
+@dataclass
+class Function(Object):
+    Parameters: List[ast.Identifier]
+    Body: ast.BlockStatement
+    Env: Any
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(FUNCTION_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        out: List[str] = []
+
+        params: List[str] = []
+        for p in self.Parameters:
+            params.append(p.String())
+
+        out.append('fn')
+        out.append('(')
+        out.append(', '.join(params))
+        out.append(') {\n')
+        out.append(self.Body.String())
+        out.append('\n}')
+
+        return ''.join(out)

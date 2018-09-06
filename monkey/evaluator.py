@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, cast
 
 from monkey import ast, environment, object
 
@@ -59,6 +59,21 @@ def Eval(node: Any, env: environment.Environment) -> Optional[object.Object]:
             return None
     elif type(node) == ast.Identifier:
         return evalIdentifier(node, env)
+    elif type(node) == ast.FunctionLiteral:
+        params = node.Parameters
+        body = node.Body
+        return object.Function(Parameters=params, Env=env, Body=body)
+    elif type(node) == ast.CallExpression:
+        function = Eval(node.Function, env)
+        if function:
+            if isError(function):
+                return function
+        args = evalExpressions(node.Arguments, env)
+        if len(args) == 1 and isError(args[0]):
+            return args[0]
+        if not function:
+            return None
+        return applyFunction(function, args)
     return None
 
 
@@ -201,6 +216,49 @@ def evalIdentifier(node: ast.Identifier, env: environment.Environment) -> Option
         return newError('identifier not found: ' + node.Value, tuple())
 
     return val
+
+
+def evalExpressions(exps: List[ast.Expression],
+                    env: environment.Environment) -> List[object.Object]:
+    result: List[object.Object] = []
+
+    for e in exps:
+        evaluated = Eval(e, env)
+        if evaluated:
+            if isError(evaluated):
+                return [object.AnyObject(evaluated)]
+            result.append(evaluated)
+
+    return result
+
+
+def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[object.Object]:
+    function = cast(object.Function, fn)
+    if not function:
+        return newError('not a function: %s', (fn.Type.TypeName, ))
+
+    extendedEnv = extendFunctionEnv(function, args)
+    evaluated = Eval(function.Body, extendedEnv)
+    if evaluated is not None:
+        return unwrapReturnValue(evaluated)
+    else:
+        return None
+
+
+def extendFunctionEnv(fn: object.Function, args: List[object.Object]) -> environment.Environment:
+    env = environment.NewEnclosedEnvironment(fn.Env)
+
+    for paramIdx, param in enumerate(fn.Parameters):
+        env.Set(param.Value, args[paramIdx])
+
+    return env
+
+
+def unwrapReturnValue(obj: object.Object) -> object.Object:
+    if type(obj) == object.ReturnValue:
+        return obj.Value
+
+    return obj
 
 
 def isTruthy(obj: object.Object) -> bool:

@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.06
+
+ - 3.10: P160-171 Eval. FunctionLiteral, CallExpression, applyFunction, EnclosedEnvironment
+
 ## 2018.09.05
 
  - 3.9: P155-160 Eval. LetStatement(Environment and Bind)

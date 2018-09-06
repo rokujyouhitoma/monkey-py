@@ -188,6 +188,53 @@ class TestEvaluator(unittest.TestCase):
         for tt in tests:
             testIntegerObject(self, testEval(tt.input), tt.expected)
 
+    def test_function_object(self):
+        input = 'fn(x) { x + 2; };'
+        evaluated = testEval(input)
+
+        fn = evaluated
+        if not fn:
+            self.fail('object is not Function. got=%s (%s)' % (evaluated, evaluated))
+
+        if len(fn.Parameters) != 1:
+            self.fail('function has wrong parameters. Parameters=%s' % fn.Parameters)
+
+        if fn.Parameters[0].String() != 'x':
+            self.fail('parameter is not \'x\'. got=%s' % fn.Parameters[0])
+
+        expectedBody = '(x + 2)'
+
+        if fn.Body.String() != expectedBody:
+            self.fail('body is not %s. got=%s' % (expectedBody, fn.Body.String()))
+
+    def test_function_application(self):
+        @dataclass
+        class Test:
+            input: str
+            expected: int
+
+        tests: List[Test] = [
+            Test('let identity = fn(x) { x; }; identity(5);', 5),
+            Test('let identity = fn(x) { return x; }; identity(5);', 5),
+            Test('let double = fn(x) { x * 2; }; double(5);', 10),
+            Test('let add = fn(x, y) { x + y; }; add(5, 5);', 10),
+            Test('let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));', 20),
+            Test('fn(x) { x; }(5)', 5),
+        ]
+
+        for tt in tests:
+            testIntegerObject(self, testEval(tt.input), tt.expected)
+
+    def test_closures(self):
+        input = '''
+        let newAdder = fn(x) {
+          fn(y) { x + y };
+        };
+
+        let addTwo = newAdder(2);
+        addTwo(2);'''
+        testIntegerObject(self, testEval(input), 4)
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:
