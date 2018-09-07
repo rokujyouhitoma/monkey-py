@@ -1,13 +1,13 @@
 from typing import Any, List, Optional, Tuple, cast
 
-from monkey import ast, environment, object
+from monkey import ast, object
 
 NULL = object.Null()
 TRUE = object.Boolean(Value=True)
 FALSE = object.Boolean(Value=False)
 
 
-def Eval(node: Any, env: environment.Environment) -> Optional[object.Object]:
+def Eval(node: Any, env: object.Environment) -> Optional[object.Object]:
     if type(node) == ast.Program:
         return evalProgram(node, env)
     elif type(node) == ast.ExpressionStatement:
@@ -77,8 +77,7 @@ def Eval(node: Any, env: environment.Environment) -> Optional[object.Object]:
     return None
 
 
-def evalStatements(stmts: List[ast.Statement],
-                   env: environment.Environment) -> Optional[object.Object]:
+def evalStatements(stmts: List[ast.Statement], env: object.Environment) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in stmts:
         result = Eval(statement, env)
@@ -159,7 +158,7 @@ def evalIntegerInfixExpression(operator: str, left: object.Object,
                         (left.Type.TypeName, operator, right.Type.TypeName))
 
 
-def evalIfExpression(ie: ast.IfExpression, env: environment.Environment) -> object.Object:
+def evalIfExpression(ie: ast.IfExpression, env: object.Environment) -> object.Object:
     condition = Eval(ie.Condition, env)
     if not condition:
         return NULL
@@ -183,7 +182,7 @@ def evalIfExpression(ie: ast.IfExpression, env: environment.Environment) -> obje
         return NULL
 
 
-def evalProgram(program: ast.Program, env: environment.Environment) -> Optional[object.Object]:
+def evalProgram(program: ast.Program, env: object.Environment) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in program.Statements:
         result = Eval(statement, env)
@@ -197,7 +196,7 @@ def evalProgram(program: ast.Program, env: environment.Environment) -> Optional[
 
 
 def evalBlockStatement(block: ast.BlockStatement,
-                       env: environment.Environment) -> Optional[object.Object]:
+                       env: object.Environment) -> Optional[object.Object]:
     result: Optional[object.Object]
     for statement in block.Statements:
         result = Eval(statement, env)
@@ -210,7 +209,7 @@ def evalBlockStatement(block: ast.BlockStatement,
     return result
 
 
-def evalIdentifier(node: ast.Identifier, env: environment.Environment) -> Optional[object.Object]:
+def evalIdentifier(node: ast.Identifier, env: object.Environment) -> Optional[object.Object]:
     val = env.Get(node.Value)
     if not val:
         return newError('identifier not found: ' + node.Value, tuple())
@@ -218,8 +217,7 @@ def evalIdentifier(node: ast.Identifier, env: environment.Environment) -> Option
     return val
 
 
-def evalExpressions(exps: List[ast.Expression],
-                    env: environment.Environment) -> List[object.Object]:
+def evalExpressions(exps: List[ast.Expression], env: object.Environment) -> List[object.Object]:
     result: List[object.Object] = []
 
     for e in exps:
@@ -245,8 +243,8 @@ def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[obje
         return None
 
 
-def extendFunctionEnv(fn: object.Function, args: List[object.Object]) -> environment.Environment:
-    env = environment.NewEnclosedEnvironment(fn.Env)
+def extendFunctionEnv(fn: object.Function, args: List[object.Object]) -> object.Environment:
+    env = object.NewEnclosedEnvironment(fn.Env)
 
     for paramIdx, param in enumerate(fn.Parameters):
         env.Set(param.Value, args[paramIdx])

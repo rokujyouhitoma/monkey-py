@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.07
+
+ - Refactoring: move environmment.Environment into object.Environment
+
 ## 2018.09.06
 
  - 3.10: P160-171 Eval. FunctionLiteral, CallExpression, applyFunction, EnclosedEnvironment

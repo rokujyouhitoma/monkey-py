@@ -1,12 +1,12 @@
 from typing import List
 
-from monkey import environment, evaluator, lexer, parser
+from monkey import evaluator, lexer, object, parser
 
 PROMPT = '>> '
 
 
 def Start() -> None:
-    env = environment.NewEnvironment()
+    env = object.NewEnvironment()
     while True:
         try:
             line = input(PROMPT)

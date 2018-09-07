@@ -2,7 +2,7 @@ import unittest
 from dataclasses import dataclass
 from typing import Any, List
 
-from monkey import environment, evaluator, lexer, object, parser
+from monkey import evaluator, lexer, object, parser
 
 
 class TestEvaluator(unittest.TestCase):
@@ -247,7 +247,7 @@ def testEval(input: str) -> object.Object:
     lex = lexer.New(input)
     p = parser.New(lex)
     program = p.ParseProgram()
-    env = environment.NewEnvironment()
+    env = object.NewEnvironment()
     return evaluator.Eval(program, env)
 
 
