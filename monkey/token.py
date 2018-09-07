@@ -48,6 +48,8 @@ IF = TokenType(TypeName='IF')
 ELSE = TokenType(TypeName='ELSE')
 RETURN = TokenType(TypeName='RETURN')
 
+STRING = TokenType(TypeName='STRING')
+
 keywords: Dict[str, TokenType] = {
     'fn': FUNCTION,
     'let': LET,

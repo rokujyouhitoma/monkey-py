@@ -16,6 +16,7 @@
 
 ## 2018.09.07
 
+ - 4.2.1: P176-178: Lexer. Support for token.STRING
  - Refactoring: move environmment.Environment into object.Environment
 
 ## 2018.09.06

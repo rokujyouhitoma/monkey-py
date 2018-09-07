@@ -65,6 +65,9 @@ class Lexer:
             tok = self.newToken(token.RBRACE, self.ch)
         elif self.ch == '':
             tok = self.newToken(token.EOF, '')
+        elif self.ch == '"':
+            literal = self.readString()
+            tok = self.newToken(token.STRING, literal)
         else:
             if self.isLetter(self.ch):
                 literal = self.readIdentifier()
@@ -98,6 +101,14 @@ class Lexer:
         position = self.position
         while self.ch != '' and self.isDigit(self.ch):
             self.readChar()
+        return self.input[position:self.position]
+
+    def readString(self) -> str:
+        position = self.position + 1
+        while True:
+            self.readChar()
+            if self.ch == '"' or self.ch == 0:
+                break
         return self.input[position:self.position]
 
     def isDigit(self, ch: str) -> bool:
