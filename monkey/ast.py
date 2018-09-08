@@ -360,3 +360,22 @@ class CallExpression(Node, Expression):
         out.append(', '.join(args))
         out.append(')')
         return ''.join(out)
+
+
+@dataclass
+class StringLiteral(Node, Expression):
+    Token: token.Token
+    Value: str
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        return self.Token.Literal

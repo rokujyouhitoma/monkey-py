@@ -293,6 +293,9 @@ class Parser():
 
         return args
 
+    def parseStringLiteral(self) -> ast.Expression:
+        return ast.StringLiteral(Token=self.curToken, Value=self.curToken.Literal)
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -362,6 +365,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerPrefix(token.IF, p.parseIfExpression)
     p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
     p.registerInfix(token.LPAREN, p.parseCallExpression)
+    p.registerPrefix(token.STRING, p.parseStringLiteral)
     p.nextToken()
     p.nextToken()
     return p

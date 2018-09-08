@@ -16,6 +16,10 @@
 
 ## 2018.09.07
 
+ - 4.2.2: P179-180: Parser. Support for token.STRING
+
+## 2018.09.07
+
  - 4.2.1: P176-178: Lexer. Support for token.STRING
  - Refactoring: move environmment.Environment into object.Environment
 

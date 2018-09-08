@@ -435,6 +435,22 @@ return 993322;
         testInfixExpression(self, exp.Arguments[1], 2, '*', 3)
         testInfixExpression(self, exp.Arguments[2], 4, '+', 5)
 
+    def test_string_literal_expression(self):
+        input = '"hello world";'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        stmt = program.Statements[0]
+        literal = stmt.ExpressionValue
+        if not literal:
+            self.fail('exp not *ast.StringLiteral. got=%s' % stmt.Expression)
+
+        if literal.Value != 'hello world':
+            self.fail('literal.Value not %s. got=%s' % ('hello world', literal.Value))
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':
