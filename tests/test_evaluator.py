@@ -235,6 +235,14 @@ class TestEvaluator(unittest.TestCase):
         addTwo(2);'''
         testIntegerObject(self, testEval(input), 4)
 
+    def test_string_literal(self):
+        input = '"Hello World!"'
+        evaluated = testEval(input)
+        if not evaluated:
+            self.fail('object is not String. got=%s (%s)' % (evaluated, evaluated))
+        if evaluated.Value != 'Hello World!':
+            self.fail('String has wrong value. got=%s' % str.Value)
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:

@@ -10,6 +10,7 @@ NULL_OBJ = 'NULL'
 RETURN_VALUE_OBJ = 'RETURN_VALUE'
 ERROR_OBJ = 'ERROR'
 FUNCTION_OBJ = 'FUNCTION'
+STRING_OBJ = 'STRING'
 
 
 @dataclass
@@ -133,6 +134,19 @@ class Function(Object):
         out.append('\n}')
 
         return ''.join(out)
+
+
+@dataclass
+class String(Object):
+    Value: str
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(STRING_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        return self.Value
 
 
 @dataclass

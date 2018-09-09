@@ -1,4 +1,4 @@
-
+ 
  - oreilly-978-4-87311-822-2e.pdf
 
 # Requirements
@@ -13,6 +13,10 @@
  - mypy
 
 # Histories
+
+## 2018.09.08
+
+ - 4.2.3: P180-182: Eval. Support for ast.StringLiteral
 
 ## 2018.09.07
 

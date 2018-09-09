@@ -74,6 +74,8 @@ def Eval(node: Any, env: object.Environment) -> Optional[object.Object]:
         if not function:
             return None
         return applyFunction(function, args)
+    elif type(node) == ast.StringLiteral:
+        return object.String(Value=node.Value)
     return None
 
 
