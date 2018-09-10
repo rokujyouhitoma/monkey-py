@@ -14,11 +14,15 @@
 
 # Histories
 
-## 2018.09.08
+## 2018.09.10
+
+ - 4.2.4: P182-183: Support for string concat feature.
+
+## 2018.09.09
 
  - 4.2.3: P180-182: Eval. Support for ast.StringLiteral
 
-## 2018.09.07
+## 2018.09.08
 
  - 4.2.2: P179-180: Parser. Support for token.STRING
 

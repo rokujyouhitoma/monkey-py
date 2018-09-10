@@ -158,6 +158,7 @@ class TestEvaluator(unittest.TestCase):
             }
             ''', 'unknown operator: BOOLEAN + BOOLEAN'),
             Test('foobar', 'identifier not found: foobar'),
+            Test('"Hello" - "World"', 'unknown operator: STRING - STRING'),
         ]
 
         for tt in tests:

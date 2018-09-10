@@ -130,6 +130,8 @@ def evalInfixExpression(operator: str, left: object.Object, right: object.Object
     elif left.Type.TypeName != right.Type.TypeName:
         return newError('type mismatch: %s %s %s',
                         (left.Type.TypeName, operator, right.Type.TypeName))
+    elif left.Type.TypeName == object.STRING_OBJ and right.Type.TypeName == object.STRING_OBJ:
+        return evalStringInfixExpression(operator, left, right)
     else:
         return newError('unknown operator: %s %s %s',
                         (left.Type.TypeName, operator, right.Type.TypeName))
@@ -158,6 +160,17 @@ def evalIntegerInfixExpression(operator: str, left: object.Object,
     else:
         return newError('unknown operator: %s %s %s',
                         (left.Type.TypeName, operator, right.Type.TypeName))
+
+
+def evalStringInfixExpression(operator: str, left: object.Object,
+                              right: object.Object) -> object.Object:
+    if operator != '+':
+        return newError('unknown operator: %s %s %s',
+                        (left.Type.TypeName, operator, right.Type.TypeName))
+
+    leftVal = left.Value
+    rightVal = right.Value
+    return object.String(Value=leftVal + rightVal)
 
 
 def evalIfExpression(ie: ast.IfExpression, env: object.Environment) -> object.Object:
