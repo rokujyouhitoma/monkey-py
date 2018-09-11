@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.11
+
+ - 4.3.1: P184-189: Support for builtin function len.
+
 ## 2018.09.10
 
  - 4.2.4: P182-183: Support for string concat feature.

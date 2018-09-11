@@ -244,6 +244,34 @@ class TestEvaluator(unittest.TestCase):
         if evaluated.Value != 'Hello World!':
             self.fail('String has wrong value. got=%s' % str.Value)
 
+    def test_builtin_functions(self):
+        @dataclass
+        class Test:
+            input: str
+            expected: Any
+
+        tests = [
+            Test('len("")', 0),
+            Test('len("four")', 4),
+            Test('len("hello world")', 11),
+            Test('len(1)', 'argument to \'len\' not supported, got INTEGER'),
+            Test('len("one", "two")', 'wrong number of arguments. got=2, want=1'),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            expected = tt.expected
+            if type(expected) == int:
+                testIntegerObject(self, evaluated, expected)
+            elif type(expected) == str:
+                errObj = evaluated
+                if not errObj:
+                    self.fail('object is not Error. got=%s (%s)' % (evaluated, evaluated))
+                    continue
+                if errObj.Message != expected:
+                    self.fail(
+                        'wrong error message. expected=%s, got=%s' % (expected, errObj.Message))
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:

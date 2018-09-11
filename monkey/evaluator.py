@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Tuple, cast
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 from monkey import ast, object
 
@@ -226,10 +226,14 @@ def evalBlockStatement(block: ast.BlockStatement,
 
 def evalIdentifier(node: ast.Identifier, env: object.Environment) -> Optional[object.Object]:
     val = env.Get(node.Value)
-    if not val:
-        return newError('identifier not found: ' + node.Value, tuple())
+    if val:
+        return val
 
-    return val
+    builtin = builtins.get(node.Value)
+    if builtin:
+        return builtin
+
+    return newError('identifier not found: ' + node.Value, tuple())
 
 
 def evalExpressions(exps: List[ast.Expression], env: object.Environment) -> List[object.Object]:
@@ -246,16 +250,22 @@ def evalExpressions(exps: List[ast.Expression], env: object.Environment) -> List
 
 
 def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[object.Object]:
-    function = cast(object.Function, fn)
-    if not function:
-        return newError('not a function: %s', (fn.Type.TypeName, ))
+    if type(fn) == object.Function:
+        function = cast(object.Function, fn)
+        if not function:
+            return newError('not a function: %s', (fn.Type.TypeName, ))
 
-    extendedEnv = extendFunctionEnv(function, args)
-    evaluated = Eval(function.Body, extendedEnv)
-    if evaluated is not None:
-        return unwrapReturnValue(evaluated)
+        extendedEnv = extendFunctionEnv(function, args)
+        evaluated = Eval(function.Body, extendedEnv)
+        if evaluated is not None:
+            return unwrapReturnValue(evaluated)
+        else:
+            return None
+    elif type(fn) == object.Builtin:
+        builtin = cast(object.Builtin, fn)
+        return builtin.Fn(args)
     else:
-        return None
+        return newError('not a function: %s', (fn.Type.TypeName, ))
 
 
 def extendFunctionEnv(fn: object.Function, args: List[object.Object]) -> object.Environment:
@@ -298,3 +308,19 @@ def nativeBoolToBooleanObject(input: bool) -> object.Boolean:
 
 def newError(template: str, a: Tuple[Any, ...]) -> object.Error:
     return object.Error(Message=template % a)
+
+
+def builtin_len(args: List[object.Object]) -> object.Object:
+    if len(args) != 1:
+        return newError('wrong number of arguments. got=%s, want=1', (len(args), ))
+
+    arg = args[0]
+    if type(arg) == object.String:
+        return object.Integer(Value=int(len(arg.Value)))
+    else:
+        return newError('argument to \'len\' not supported, got %s', (args[0].Type.TypeName, ))
+
+
+builtins: Dict[str, object.Builtin] = {
+    'len': object.Builtin(Fn=builtin_len),
+}

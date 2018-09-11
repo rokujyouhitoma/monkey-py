@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from monkey import ast
 
@@ -11,6 +11,7 @@ RETURN_VALUE_OBJ = 'RETURN_VALUE'
 ERROR_OBJ = 'ERROR'
 FUNCTION_OBJ = 'FUNCTION'
 STRING_OBJ = 'STRING'
+BUILTIN_OBJ = 'BUILTIN'
 
 
 @dataclass
@@ -147,6 +148,22 @@ class String(Object):
     @property
     def Inspect(self) -> str:
         return self.Value
+
+
+BuiltinFunction = Callable[[List[Object]], Object]
+
+
+@dataclass
+class Builtin(Object):
+    Fn: Any
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(BUILTIN_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        return 'builtin function'
 
 
 @dataclass
