@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.12
+
+ - 4.4.1: P190-192: Lexer. Support for Array.
+
 ## 2018.09.11
 
  - 4.3.1: P184-189: Support for builtin function len.

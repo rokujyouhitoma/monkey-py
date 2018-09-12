@@ -68,6 +68,10 @@ class Lexer:
         elif self.ch == '"':
             literal = self.readString()
             tok = self.newToken(token.STRING, literal)
+        elif self.ch == '[':
+            tok = self.newToken(token.LBRACKET, self.ch)
+        elif self.ch == ']':
+            tok = self.newToken(token.RBRACKET, self.ch)
         else:
             if self.isLetter(self.ch):
                 literal = self.readIdentifier()

@@ -50,6 +50,9 @@ RETURN = TokenType(TypeName='RETURN')
 
 STRING = TokenType(TypeName='STRING')
 
+LBRACKET = TokenType(TypeName='[')
+RBRACKET = TokenType(TypeName=']')
+
 keywords: Dict[str, TokenType] = {
     'fn': FUNCTION,
     'let': LET,
