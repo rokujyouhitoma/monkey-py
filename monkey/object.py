@@ -12,6 +12,7 @@ ERROR_OBJ = 'ERROR'
 FUNCTION_OBJ = 'FUNCTION'
 STRING_OBJ = 'STRING'
 BUILTIN_OBJ = 'BUILTIN'
+ARRAY_OBJ = 'ARRAY'
 
 
 @dataclass
@@ -148,6 +149,29 @@ class String(Object):
     @property
     def Inspect(self) -> str:
         return self.Value
+
+
+@dataclass
+class Array(Object):
+    Elements: List[Object]
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(ARRAY_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        out: List[str] = []
+
+        elements: List[str] = []
+        for e in self.Elements:
+            elements.append(e.Inspect)
+
+        out.append('[')
+        out.append(', '.join(elements))
+        out.append(']')
+
+        return ''.join(out)
 
 
 BuiltinFunction = Callable[[List[Object]], Object]

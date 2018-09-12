@@ -272,6 +272,21 @@ class TestEvaluator(unittest.TestCase):
                     self.fail(
                         'wrong error message. expected=%s, got=%s' % (expected, errObj.Message))
 
+    def test_array_literals(self):
+        input = '[1, 2 * 2, 3 + 3]'
+
+        evaluated = testEval(input)
+        result = evaluated
+        if not result:
+            self.fail('object is not Array. got=%s (%s)' % (evaluated, evaluated))
+
+        if len(result.Elements) != 3:
+            self.fail('array has wrong num of elements. got=%s' % len(result.Elements))
+
+        testIntegerObject(self, result.Elements[0], 1)
+        testIntegerObject(self, result.Elements[1], 4)
+        testIntegerObject(self, result.Elements[2], 6)
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:

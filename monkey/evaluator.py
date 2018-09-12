@@ -76,6 +76,11 @@ def Eval(node: Any, env: object.Environment) -> Optional[object.Object]:
         return applyFunction(function, args)
     elif type(node) == ast.StringLiteral:
         return object.String(Value=node.Value)
+    elif type(node) == ast.ArrayLiteral:
+        elements = evalExpressions(node.Elements, env)
+        if len(elements) == 1 and isError(elements[0]):
+            return elements[0]
+        return object.Array(Elements=elements)
     return None
 
 
