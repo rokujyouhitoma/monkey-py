@@ -451,6 +451,26 @@ return 993322;
         if literal.Value != 'hello world':
             self.fail('literal.Value not %s. got=%s' % ('hello world', literal.Value))
 
+    def test_parsing_array_literals(self):
+        input = '[1, 2 * 2, 3 + 3]'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        stmt = program.Statements[0]
+        array = stmt.ExpressionValue
+        if not array:
+            self.fail('exp not ast.ArrayLiteral. got=%s' % stmt.ExpressionValue)
+
+        if len(array.Elements) != 3:
+            self.fail('len(array.Elements) not 3. got=%s' % len(array.Elements))
+
+        testIntegerLiteral(self, array.Elements[0], 1)
+        testInfixExpression(self, array.Elements[1], 2, '*', 2)
+        testInfixExpression(self, array.Elements[2], 3, '+', 3)
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':

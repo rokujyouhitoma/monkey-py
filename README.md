@@ -16,6 +16,7 @@
 
 ## 2018.09.12
 
+ - 4.4.2: P192-195: Parser. Support for ArrayLiteral.
  - 4.4.1: P190-192: Lexer. Support for Array.
 
 ## 2018.09.11

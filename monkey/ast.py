@@ -379,3 +379,32 @@ class StringLiteral(Node, Expression):
 
     def String(self) -> str:
         return self.Token.Literal
+
+
+@dataclass
+class ArrayLiteral(Node, Expression):
+    Token: token.Token
+    Elements: List[Expression]
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        out: List[str] = []
+
+        elements: List[str] = []
+        for el in self.Elements:
+            elements.append(el.String())
+
+        out.append('[')
+        out.append(', '.join(elements))
+        out.append(']')
+
+        return ''.join(out)

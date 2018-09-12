@@ -265,7 +265,7 @@ class Parser():
         return identifiers
 
     def parseCallExpression(self, function: ast.Expression) -> Optional[ast.Expression]:
-        arguments = self.parseCallArguments()
+        arguments = self.parseExpressionList(token.RPAREN)
         exp = ast.CallExpression(Token=self.curToken, Function=function, Arguments=arguments)
         return exp
 
@@ -295,6 +295,35 @@ class Parser():
 
     def parseStringLiteral(self) -> ast.Expression:
         return ast.StringLiteral(Token=self.curToken, Value=self.curToken.Literal)
+
+    def parseArrayLiteral(self) -> ast.Expression:
+        array = ast.ArrayLiteral(
+            Token=self.curToken, Elements=self.parseExpressionList(token.RBRACKET))
+        return array
+
+    def parseExpressionList(self, end: token.TokenType) -> List[ast.Expression]:
+        list: List[ast.Expression] = []
+
+        if self.peekTokenIs(end):
+            self.nextToken()
+            return list
+
+        self.nextToken()
+        value = self.parseExpression(LOWEST)
+        if value:
+            list.append(value)
+
+        while self.peekTokenIs(token.COMMA):
+            self.nextToken()
+            self.nextToken()
+            value = self.parseExpression(LOWEST)
+            if value:
+                list.append(value)
+
+        if not self.expectPeek(end):
+            return []
+
+        return list
 
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
@@ -366,6 +395,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
     p.registerInfix(token.LPAREN, p.parseCallExpression)
     p.registerPrefix(token.STRING, p.parseStringLiteral)
+    p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
     p.nextToken()
     p.nextToken()
     return p
