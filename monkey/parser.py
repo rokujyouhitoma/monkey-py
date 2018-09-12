@@ -15,6 +15,7 @@ SUM = 3  # +
 PRODUCT = 4  # *
 PREFIX = 5  # -X or !X
 CALL = 6  # myFunction(X)
+INDEX = 7  # array[index]
 
 precedences: Dict[str, int] = {
     token.EQ.TypeName: EQUALS,
@@ -26,6 +27,7 @@ precedences: Dict[str, int] = {
     token.SLASH.TypeName: PRODUCT,
     token.ASTERISK.TypeName: PRODUCT,
     token.LPAREN.TypeName: CALL,
+    token.LBRACKET.TypeName: INDEX,
 }
 
 
@@ -325,6 +327,21 @@ class Parser():
 
         return list
 
+    def parseIndexExpression(self, left: ast.Expression) -> Optional[ast.Expression]:
+        curToken = self.curToken
+
+        self.nextToken()
+
+        index = self.parseExpression(LOWEST)
+        if not index:
+            return None
+        exp = ast.IndexExpression(Token=curToken, Left=left, Index=index)
+
+        if not self.expectPeek(token.RBRACKET):
+            return None
+
+        return exp
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -396,6 +413,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerInfix(token.LPAREN, p.parseCallExpression)
     p.registerPrefix(token.STRING, p.parseStringLiteral)
     p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
+    p.registerInfix(token.LBRACKET, p.parseIndexExpression)
     p.nextToken()
     p.nextToken()
     return p

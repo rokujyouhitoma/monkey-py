@@ -408,3 +408,31 @@ class ArrayLiteral(Node, Expression):
         out.append(']')
 
         return ''.join(out)
+
+
+@dataclass
+class IndexExpression(Node, Expression):
+    Token: token.Token
+    Left: Expression
+    Index: Expression
+
+    @property
+    def node(self) -> Node:
+        pass
+
+    def expressionNode(self) -> None:
+        pass
+
+    def TokenLiteral(self) -> str:
+        return self.Token.Literal
+
+    def String(self) -> str:
+        out: List[str] = []
+
+        out.append('(')
+        out.append(self.Left.String())
+        out.append('[')
+        out.append(self.Index.String())
+        out.append('])')
+
+        return ''.join(out)

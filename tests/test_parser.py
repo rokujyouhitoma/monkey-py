@@ -230,6 +230,9 @@ return 993322;
             Test('add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))',
                  'add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))'),
             Test('add(a + b + c * d / f + g)', 'add((((a + b) + ((c * d) / f)) + g))'),
+            Test('a * [1, 2, 3, 4][b * c] * d', '((a * ([1, 2, 3, 4][(b * c)])) * d)'),
+            Test('add(a * b[2], b[1], 2 * [1, 2][1])',
+                 'add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))'),
         ]
 
         for tt in tests:
@@ -470,6 +473,25 @@ return 993322;
         testIntegerLiteral(self, array.Elements[0], 1)
         testInfixExpression(self, array.Elements[1], 2, '*', 2)
         testInfixExpression(self, array.Elements[2], 3, '+', 3)
+
+    def test_parsing_index_expressions(self):
+        input = 'myArray[1 + 1]'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        stmt = program.Statements[0]
+        indexExp = stmt.ExpressionValue
+        if not indexExp:
+            self.fail('exp not *ast.IndexExpression. got=%s' % stmt.Expression)
+
+        if not testIdentifier(self, indexExp.Left, 'myArray'):
+            return
+
+        if not testInfixExpression(self, indexExp.Index, 1, '+', 1):
+            return
 
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
