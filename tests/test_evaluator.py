@@ -287,6 +287,33 @@ class TestEvaluator(unittest.TestCase):
         testIntegerObject(self, result.Elements[1], 4)
         testIntegerObject(self, result.Elements[2], 6)
 
+    def test_array_index_expressions(self):
+        @dataclass
+        class Test:
+            input: str
+            expected: Any
+
+        tests: List[Test] = [
+            Test('[1, 2, 3][0]', 1),
+            Test('[1, 2, 3][1]', 2),
+            Test('[1, 2, 3][2]', 3),
+            Test('let i = 0; [1][i];', 1),
+            Test('[1, 2, 3][1 + 1];', 3),
+            Test('let myArray = [1, 2, 3]; myArray[2];', 3),
+            Test('let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];', 6),
+            Test('let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]', 2),
+            Test('[1, 2, 3][3]', None),
+            Test('[1, 2, 3][-1]', None),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            integer = tt.expected
+            if integer:
+                testIntegerObject(self, evaluated, int(integer))
+            else:
+                testNullObject(self, evaluated)
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:

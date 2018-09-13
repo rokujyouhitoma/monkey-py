@@ -81,6 +81,18 @@ def Eval(node: Any, env: object.Environment) -> Optional[object.Object]:
         if len(elements) == 1 and isError(elements[0]):
             return elements[0]
         return object.Array(Elements=elements)
+    elif type(node) == ast.IndexExpression:
+        left = Eval(node.Left, env)
+        if not left:
+            return None
+        if isError(left):
+            return left
+        index = Eval(node.Index, env)
+        if not index:
+            return None
+        if isError(index):
+            return index
+        return evalIndexExpression(left, index)
     return None
 
 
@@ -252,6 +264,27 @@ def evalExpressions(exps: List[ast.Expression], env: object.Environment) -> List
             result.append(evaluated)
 
     return result
+
+
+def evalIndexExpression(left: object.Object, index: object.Object) -> object.Object:
+    if left.Type.TypeName == object.ARRAY_OBJ and index.Type.TypeName == object.INTEGER_OBJ:
+        value = evalArrayIndexExpression(left, index)
+        if not value:
+            return NULL
+        return value
+    else:
+        return newError('index operator not supported: %s', (left.Type.TypeName, ))
+
+
+def evalArrayIndexExpression(array: object.Object, index: object.Object) -> Optional[object.Object]:
+    arrayObject = cast(object.Array, array)
+    idx = index.Value
+    max = int(len(arrayObject.Elements) - 1)
+
+    if idx < 0 or idx > max:
+        return None
+
+    return arrayObject.Elements[idx]
 
 
 def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[object.Object]:

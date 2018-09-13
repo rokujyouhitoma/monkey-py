@@ -14,10 +14,15 @@
 
 # Histories
 
+## 2018.09.13
+
+ - 4.4.5: P201-205 Eval. Support for ArrayLiteral.
+
+
 ## 2018.09.12
 
- - 4.4.4: P198-201  Eval. Support for Array
- - 4.4.3: P195-199: Parser. Support for IndexLiteral
+ - 4.4.4: P198-201  Eval. Support for Array.
+ - 4.4.3: P195-199: Parser. Support for IndexLiteral.
  - 4.4.2: P192-195: Parser. Support for ArrayLiteral.
  - 4.4.1: P190-192: Lexer. Support for Array.
 
