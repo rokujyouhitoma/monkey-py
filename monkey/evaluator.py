@@ -420,7 +420,6 @@ def builtin_push(args: List[object.Object]) -> object.Object:
         return newError('argument to `push` must be ARRAY, got %s', (args[0].Type.TypeName, ))
 
     arr = cast(object.Array, arg)
-    length = len(arr.Elements)
 
     newElements = copy.deepcopy(arr.Elements)
     newElements.append(args[1])
