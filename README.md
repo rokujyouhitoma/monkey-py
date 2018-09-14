@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.15
+
+ - Improvement of REPL. REPL support for input-file with 4.4.7: P209-210.
+
 ## 2018.09.14
 
  - 4.4.6: P205-208 Support for Array BuiltinFunctions
