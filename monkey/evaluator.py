@@ -1,3 +1,4 @@
+import copy
 from typing import Any, Dict, List, Optional, Tuple, cast
 
 from monkey import ast, object
@@ -353,12 +354,84 @@ def builtin_len(args: List[object.Object]) -> object.Object:
         return newError('wrong number of arguments. got=%s, want=1', (len(args), ))
 
     arg = args[0]
-    if type(arg) == object.String:
+    if type(arg) == object.Array:
+        arg = cast(object.Array, arg)
+        return object.Integer(Value=int(len(arg.Elements)))
+    elif type(arg) == object.String:
         return object.Integer(Value=int(len(arg.Value)))
     else:
         return newError('argument to \'len\' not supported, got %s', (args[0].Type.TypeName, ))
 
 
+def builtin_first(args: List[object.Object]) -> object.Object:
+    if len(args) != 1:
+        return newError('wrong number of arguments. got=%s, want=1', (len(args), ))
+
+    arg = args[0]
+    if arg.Type.TypeName != object.ARRAY_OBJ:
+        return newError('argument to `first` must be ARRAY, got %s', (args[0].Type.TypeName, ))
+
+    arr = cast(object.Array, arg)
+    if len(arr.Elements) > 0:
+        return arr.Elements[0]
+
+    return NULL
+
+
+def builtin_last(args: List[object.Object]) -> object.Object:
+    if len(args) != 1:
+        return newError('wrong number of arguments. got=%s, want=1', (len(args), ))
+
+    arg = args[0]
+    if arg.Type.TypeName != object.ARRAY_OBJ:
+        return newError('argument to `last` must be ARRAY, got %s', (args[0].Type.TypeName, ))
+
+    arr = cast(object.Array, arg)
+    length = len(arr.Elements)
+    if length > 0:
+        return arr.Elements[length - 1]
+
+    return NULL
+
+
+def builtin_rest(args: List[object.Object]) -> object.Object:
+    if len(args) != 1:
+        return newError('wrong number of arguments. got=%s, want=1', (len(args), ))
+
+    arg = args[0]
+    if arg.Type.TypeName != object.ARRAY_OBJ:
+        return newError('argument to `rest` must be ARRAY, got %s', (args[0].Type.TypeName, ))
+
+    arr = cast(object.Array, arg)
+    length = len(arr.Elements)
+    if length > 0:
+        newElements = copy.deepcopy(arr.Elements[1:])
+        return object.Array(Elements=newElements)
+
+    return NULL
+
+
+def builtin_push(args: List[object.Object]) -> object.Object:
+    if len(args) != 2:
+        return newError('wrong number of arguments. got=%s, want=2', (len(args), ))
+
+    arg = args[0]
+    if arg.Type.TypeName != object.ARRAY_OBJ:
+        return newError('argument to `push` must be ARRAY, got %s', (args[0].Type.TypeName, ))
+
+    arr = cast(object.Array, arg)
+    length = len(arr.Elements)
+
+    newElements = copy.deepcopy(arr.Elements)
+    newElements.append(args[1])
+
+    return object.Array(Elements=newElements)
+
+
 builtins: Dict[str, object.Builtin] = {
     'len': object.Builtin(Fn=builtin_len),
+    'first': object.Builtin(Fn=builtin_first),
+    'last': object.Builtin(Fn=builtin_last),
+    'rest': object.Builtin(Fn=builtin_rest),
+    'push': object.Builtin(Fn=builtin_push),
 }

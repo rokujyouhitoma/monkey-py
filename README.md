@@ -14,10 +14,13 @@
 
 # Histories
 
+## 2018.09.14
+
+ - 4.4.6: P205-208 Support for Array BuiltinFunctions
+
 ## 2018.09.13
 
  - 4.4.5: P201-205 Eval. Support for ArrayLiteral.
-
 
 ## 2018.09.12
 
