@@ -72,6 +72,8 @@ class Lexer:
             tok = self.newToken(token.LBRACKET, self.ch)
         elif self.ch == ']':
             tok = self.newToken(token.RBRACKET, self.ch)
+        elif self.ch == ':':
+            tok = self.newToken(token.COLON, self.ch)
         else:
             if self.isLetter(self.ch):
                 literal = self.readIdentifier()

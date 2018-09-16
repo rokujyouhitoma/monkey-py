@@ -14,6 +14,10 @@
 
 # Histories
 
+## 2018.09.16
+
+ - 4.5.1: P211-213 Lexer. Support for token.COLON
+
 ## 2018.09.15
 
  - Improvement of REPL. REPL support for input-file with 4.4.7: P209-210.

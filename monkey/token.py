@@ -53,6 +53,8 @@ STRING = TokenType(TypeName='STRING')
 LBRACKET = TokenType(TypeName='[')
 RBRACKET = TokenType(TypeName=']')
 
+COLON = TokenType(TypeName=':')
+
 keywords: Dict[str, TokenType] = {
     'fn': FUNCTION,
     'let': LET,
