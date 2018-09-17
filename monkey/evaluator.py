@@ -216,7 +216,7 @@ def evalIfExpression(ie: ast.IfExpression, env: object.Environment) -> object.Ob
 
 
 def evalProgram(program: ast.Program, env: object.Environment) -> Optional[object.Object]:
-    result: Optional[object.Object]
+    result: Optional[object.Object] = None
     for statement in program.Statements:
         result = Eval(statement, env)
         if type(result) == object.ReturnValue:
