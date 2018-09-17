@@ -493,6 +493,71 @@ return 993322;
         if not testInfixExpression(self, indexExp.Index, 1, '+', 1):
             return
 
+    def test_parsing_hash_literals_string_keys(self):
+        input = '{"one": 1, "two": 2, "three": 3}'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        stmt = program.Statements[0]
+        hash = stmt.ExpressionValue
+        if not hash:
+            self.fail('exp is not ast.HashLiteral. got=%s' % stmt.Expression)
+
+        if len(hash.Pairs) != 3:
+            self.fail('hash.Pairs has wrong length. got=%s' % len(hash.Pairs))
+
+        expected = {
+            'one': 1,
+            'two': 2,
+            'three': 3,
+        }
+
+        for key in hash.Pairs.keys():
+            value = hash.Pairs[key]
+
+            expectedValue = expected[key]
+
+            testIntegerLiteral(self, value, expectedValue)
+
+    def test_parsing_hash_literals_with_expressions(self):
+        input = '{"one": 0 + 1, "two": 10 - 8, "three": 15 / 5}'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        stmt = program.Statements[0]
+        hash = stmt.ExpressionValue
+        if not hash:
+            self.fail('exp is not ast.HashLiteral. got=%s' % stmt.ExpressionValue)
+
+        if len(hash.Pairs) != 3:
+            self.fail('hash.Pairs has wrong length. got=%s' % len(hash.Pairs))
+
+        tests = {
+            'one': lambda e: testInfixExpression(self, e, 0, '+', 1),
+            'two': lambda e: testInfixExpression(self, e, 10, '-', 8),
+            'three': lambda e: testInfixExpression(self, e, 15, '/', 5)
+        }
+
+        for key in hash.Pairs.keys():
+            value = hash.Pairs[key]
+            literal = key
+            if not literal:
+                print('key is not ast.StringLiteral. got=%s' % key)
+                continue
+
+            testFunc = tests[literal]
+            if not testFunc:
+                print('No test function for key %s found' % literal)
+                continue
+
+            testFunc(value)
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':

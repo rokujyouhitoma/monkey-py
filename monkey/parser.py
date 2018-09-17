@@ -342,6 +342,31 @@ class Parser():
 
         return exp
 
+    def parseHashLiteral(self) -> Optional[ast.Expression]:
+        pairs: Dict[str, ast.Expression] = {}
+
+        while not self.peekTokenIs(token.RBRACE):
+            self.nextToken()
+            key = self.parseExpression(LOWEST)
+
+            if not self.expectPeek(token.COLON):
+                return None
+
+            self.nextToken()
+            value = self.parseExpression(LOWEST)
+
+            if key and value:
+                pairs[key.String()] = value
+
+            if not self.peekTokenIs(token.RBRACE) and not self.expectPeek(token.COMMA):
+                return None
+
+        if not self.expectPeek(token.RBRACE):
+            return None
+
+        hash = ast.HashLiteral(Token=self.curToken, Pairs=pairs)
+        return hash
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -413,6 +438,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerInfix(token.LPAREN, p.parseCallExpression)
     p.registerPrefix(token.STRING, p.parseStringLiteral)
     p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
+    p.registerPrefix(token.LBRACE, p.parseHashLiteral)
     p.registerInfix(token.LBRACKET, p.parseIndexExpression)
     p.nextToken()
     p.nextToken()

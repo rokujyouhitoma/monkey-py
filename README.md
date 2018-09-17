@@ -14,6 +14,11 @@
 
 # Histories
 
+## 2018.09.17
+
+ - 4.5.2: P213-218 Parser. Support for HashLiteral
+ - private comment: so...Today, PyConJP 2018 has come!
+
 ## 2018.09.16
 
  - 4.5.1: P211-213 Lexer. Support for token.COLON
