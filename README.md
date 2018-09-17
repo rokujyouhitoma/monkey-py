@@ -17,7 +17,7 @@
 ## 2018.09.17
 
  - 4.5.2: P213-218 Parser. Support for HashLiteral
- - Fixed bugs at evaluator.py
+ - Fixed bugs at evaluator.py and Add regression test case.
  - private comment: so...Today, PyConJP 2018 has come!
 
 ## 2018.09.16

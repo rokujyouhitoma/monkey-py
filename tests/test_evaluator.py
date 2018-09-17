@@ -314,6 +314,13 @@ class TestEvaluator(unittest.TestCase):
             else:
                 testNullObject(self, evaluated)
 
+    def test_empty(self):
+        input = ''
+
+        evaluated = testEval(input)
+        if evaluated:
+            self.fail('evaluated is not empty')
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:
