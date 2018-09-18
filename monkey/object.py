@@ -1,5 +1,7 @@
+import hashlib
 from abc import abstractmethod
 from dataclasses import dataclass
+from functools import singledispatch
 from typing import Any, Callable, Dict, List, Optional
 
 from monkey import ast
@@ -13,6 +15,7 @@ FUNCTION_OBJ = 'FUNCTION'
 STRING_OBJ = 'STRING'
 BUILTIN_OBJ = 'BUILTIN'
 ARRAY_OBJ = 'ARRAY'
+HASH_OBJ = 'HASH'
 
 
 @dataclass
@@ -170,6 +173,66 @@ class Array(Object):
         out.append('[')
         out.append(', '.join(elements))
         out.append(']')
+
+        return ''.join(out)
+
+
+@dataclass
+class HashKey():
+    Type: ObjectType
+    Value: int
+
+
+@singledispatch
+def GetHashKey(arg: Any) -> Any:
+    return None
+
+
+@GetHashKey.register(Boolean)
+def GetHashKeyBoolean(b: Boolean) -> HashKey:
+    value = 1 if b.Value else 0
+    return HashKey(Type=b.Type, Value=value)
+
+
+@GetHashKey.register(Integer)
+def GetHashKeyInteger(i: Integer) -> HashKey:
+    return HashKey(Type=i.Type, Value=int(i.Value))
+
+
+@GetHashKey.register(String)
+def GetHashKeyString(s: String) -> HashKey:
+    m = hashlib.sha256()
+    m.update(s.Value.encode())
+    digest = int(m.hexdigest(), 16)
+    return HashKey(Type=s.Type, Value=digest)
+
+
+@dataclass
+class HashPair():
+    Key: Object
+    Value: Object
+
+
+@dataclass
+class Hash():
+    Pairs: Dict[HashKey, HashPair]
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(HASH_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        out: List[str] = []
+
+        pairs: List[str] = []
+        for key in self.Pairs.keys():
+            pair = self.Pairs[key]
+            pairs.append('%s: %s' % (pair.Key.Inspect, pair.Value.Inspect))
+
+        out.append('{')
+        out.append(', '.join(pairs))
+        out.append('}')
 
         return ''.join(out)
 

@@ -14,15 +14,19 @@
 
 # Histories
 
+## 2018.09.18
+
+ - 4.5.3: P218-223 Object. Support for Hash.
+
 ## 2018.09.17
 
- - 4.5.2: P213-218 Parser. Support for HashLiteral
+ - 4.5.2: P213-218 Parser. Support for HashLiteral.
  - Fixed bugs at evaluator.py and Add regression test case.
  - private comment: so...Today, PyConJP 2018 has come!
 
 ## 2018.09.16
 
- - 4.5.1: P211-213 Lexer. Support for token.COLON
+ - 4.5.1: P211-213 Lexer. Support for token.COLON.
 
 ## 2018.09.15
 
@@ -30,7 +34,7 @@
 
 ## 2018.09.14
 
- - 4.4.6: P205-208 Support for Array BuiltinFunctions
+ - 4.4.6: P205-208 Support for Array BuiltinFunctions.
 
 ## 2018.09.13
 
