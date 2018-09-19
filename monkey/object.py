@@ -2,7 +2,7 @@ import hashlib
 from abc import abstractmethod
 from dataclasses import dataclass
 from functools import singledispatch
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from monkey import ast
 
@@ -214,8 +214,8 @@ class HashPair():
 
 
 @dataclass
-class Hash():
-    Pairs: Dict[HashKey, HashPair]
+class Hash(Object):
+    Pairs: List[Tuple[HashKey, HashPair]]
 
     @property
     def Type(self) -> ObjectType:
@@ -226,8 +226,7 @@ class Hash():
         out: List[str] = []
 
         pairs: List[str] = []
-        for key in self.Pairs.keys():
-            pair = self.Pairs[key]
+        for key, pair in self.Pairs:
             pairs.append('%s: %s' % (pair.Key.Inspect, pair.Value.Inspect))
 
         out.append('{')

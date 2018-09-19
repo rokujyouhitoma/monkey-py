@@ -94,6 +94,8 @@ def Eval(node: Any, env: object.Environment) -> Optional[object.Object]:
         if isError(index):
             return index
         return evalIndexExpression(left, index)
+    elif type(node) == ast.HashLiteral:
+        return evalHashLiteral(node, env)
     return None
 
 
@@ -286,6 +288,33 @@ def evalArrayIndexExpression(array: object.Object, index: object.Object) -> Opti
         return None
 
     return arrayObject.Elements[idx]
+
+
+def evalHashLiteral(node: ast.HashLiteral, env: object.Environment) -> object.Object:
+    pairs: List[Tuple[object.HashKey, object.HashPair]] = []
+
+    for keyNode, valueNode in node.Pairs:
+        key = Eval(keyNode, env)
+        if key:
+            if isError(key):
+                return key
+
+        hashKey = key
+        if not hashKey:
+            if key:
+                return newError('unusable as hash key: %s', (key.Type.TypeName, ))
+
+        value = Eval(valueNode, env)
+        if value:
+            if isError(value):
+                return value
+
+        if hashKey:
+            hashed = object.GetHashKey(hashKey)
+            if key and value:
+                pairs.append((hashed, object.HashPair(Key=key, Value=value)))
+
+    return object.Hash(Pairs=pairs)
 
 
 def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[object.Object]:

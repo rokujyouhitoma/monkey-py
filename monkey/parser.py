@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Tuple
 
 from monkey import ast, lexer, token
 
@@ -343,7 +343,7 @@ class Parser():
         return exp
 
     def parseHashLiteral(self) -> Optional[ast.Expression]:
-        pairs: Dict[str, ast.Expression] = {}
+        pairs: List[Tuple[ast.Expression, ast.Expression]] = []
 
         while not self.peekTokenIs(token.RBRACE):
             self.nextToken()
@@ -356,7 +356,7 @@ class Parser():
             value = self.parseExpression(LOWEST)
 
             if key and value:
-                pairs[key.String()] = value
+                pairs.append((key, value))
 
             if not self.peekTokenIs(token.RBRACE) and not self.expectPeek(token.COMMA):
                 return None

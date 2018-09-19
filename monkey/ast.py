@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import List, Optional, Tuple
 
 from monkey import token
 
@@ -441,7 +441,7 @@ class IndexExpression(Node, Expression):
 @dataclass
 class HashLiteral(Node, Expression):
     Token: token.Token
-    Pairs: Dict[str, Expression]
+    Pairs: List[Tuple[Expression, Expression]]
 
     @property
     def node(self) -> Node:
@@ -457,9 +457,9 @@ class HashLiteral(Node, Expression):
         out: List[str] = []
 
         pairs: List[str] = []
-        for key in self.Pairs.keys():
-            value = self.Pairs[key]
-            pairs.append(key + ':' + value.String())
+        for key, value in self.Pairs:
+            # value = self.Pairs[key]
+            pairs.append(key.String() + ':' + value.String())
 
         out.append('{')
         out.append(', '.join(pairs))

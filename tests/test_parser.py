@@ -515,10 +515,9 @@ return 993322;
             'three': 3,
         }
 
-        for key in hash.Pairs.keys():
-            value = hash.Pairs[key]
+        for key, value in hash.Pairs:
 
-            expectedValue = expected[key]
+            expectedValue = expected[key.Value]
 
             testIntegerLiteral(self, value, expectedValue)
 
@@ -544,14 +543,13 @@ return 993322;
             'three': lambda e: testInfixExpression(self, e, 15, '/', 5)
         }
 
-        for key in hash.Pairs.keys():
-            value = hash.Pairs[key]
+        for key, value in hash.Pairs:
             literal = key
             if not literal:
                 print('key is not ast.StringLiteral. got=%s' % key)
                 continue
 
-            testFunc = tests[literal]
+            testFunc = tests[literal.Value]
             if not testFunc:
                 print('No test function for key %s found' % literal)
                 continue

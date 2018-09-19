@@ -12,7 +12,15 @@
  - flake8
  - mypy
 
+# TODO
+
+ - 4.5.4: Improvement of Dict[HashKey, HashPair] structure.
+
 # Histories
+
+## 2018.09.19
+
+ - 4.5.4: P223-226 Eval. Support for HashLiteral.
 
 ## 2018.09.18
 

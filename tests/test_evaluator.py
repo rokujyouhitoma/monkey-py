@@ -321,6 +321,42 @@ class TestEvaluator(unittest.TestCase):
         if evaluated:
             self.fail('evaluated is not empty')
 
+    def test_hash_literals(self):
+        input = '''let two = "two";
+        {
+          "one": 10 - 9,
+          two: 1 + 1,
+          "thr" + "ee": 6 / 2,
+          4: 4,
+          true: 5,
+          false: 6
+        }'''
+
+        evaluated = testEval(input)
+        result = evaluated
+        if not result:
+            self.fail('Eval didn\'t return Hash. got=%s (%s)' % (evaluated, evaluated))
+
+        expected = [
+            (object.GetHashKey(object.String(Value='one')), 1),
+            (object.GetHashKey(object.String(Value='two')), 2),
+            (object.GetHashKey(object.String(Value='three')), 3),
+            (object.GetHashKey(object.Integer(Value=4)), 4),
+            (object.GetHashKey(evaluator.TRUE), 5),
+            (object.GetHashKey(evaluator.FALSE), 6),
+        ]
+
+        if len(result.Pairs) != len(expected):
+            self.fail('Hash has wrong num of pairs. got=%s' % len(result.Pairs))
+
+        for expectedKey, expectedValue in expected:
+            # TODO: xxx
+            pair = [x for x in result.Pairs if x[0].Value == expectedKey.Value][0][1]
+            if not pair:
+                self.fail('no pair for given key in Pairs')
+
+            testIntegerObject(self, pair.Value, expectedValue)
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:
