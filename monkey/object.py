@@ -78,6 +78,8 @@ class Boolean(Object):
 
 @dataclass
 class Null(Object):
+    Value: Any = None
+
     @property
     def Type(self) -> ObjectType:
         return ObjectType(NULL_OBJ)
@@ -234,6 +236,21 @@ class Hash(Object):
         out.append('}')
 
         return ''.join(out)
+
+
+def GetHashPair(hash: Hash, key: HashKey) -> Optional[HashPair]:
+    pairs: List[Tuple[HashKey, HashPair]] = hash.Pairs
+
+    if not key:
+        return None
+
+    # TODO: It's is O(n)
+    list = [x for x in pairs if x[0].Value == key.Value]
+    if len(list) == 0:
+        return None
+
+    hashKey, hashPair = list[0]
+    return hashPair
 
 
 BuiltinFunction = Callable[[List[Object]], Object]

@@ -458,7 +458,6 @@ class HashLiteral(Node, Expression):
 
         pairs: List[str] = []
         for key, value in self.Pairs:
-            # value = self.Pairs[key]
             pairs.append(key.String() + ':' + value.String())
 
         out.append('{')

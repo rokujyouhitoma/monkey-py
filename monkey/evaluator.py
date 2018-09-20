@@ -275,6 +275,11 @@ def evalIndexExpression(left: object.Object, index: object.Object) -> object.Obj
         if not value:
             return NULL
         return value
+    elif left.Type.TypeName == object.HASH_OBJ:
+        value = evalHashIndexExpression(left, index)
+        if not value:
+            return NULL
+        return value
     else:
         return newError('index operator not supported: %s', (left.Type.TypeName, ))
 
@@ -315,6 +320,23 @@ def evalHashLiteral(node: ast.HashLiteral, env: object.Environment) -> object.Ob
                 pairs.append((hashed, object.HashPair(Key=key, Value=value)))
 
     return object.Hash(Pairs=pairs)
+
+
+def evalHashIndexExpression(hash: object.Object, index: object.Object) -> Optional[object.Object]:
+    hashObject = hash
+    key = index
+    if not key:
+        return newError('unusable as hash key: %s', (index.Type.TypeName, ))
+    # TODO: not hashable
+    if not type(key) in (object.String, object.Integer, object.Boolean):
+        return newError('unusable as hash key: %s', (index.Type.TypeName, ))
+
+    hash = cast(object.Hash, hashObject)
+    pair = object.GetHashPair(hash, object.GetHashKey(key))
+    if not pair:
+        return NULL
+
+    return pair.Value
 
 
 def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[object.Object]:

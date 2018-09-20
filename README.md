@@ -18,6 +18,10 @@
 
 # Histories
 
+## 2018.09.20
+
+ - 4.5.5: P226-229 Eval. Support for Hash.
+
 ## 2018.09.19
 
  - 4.5.4: P223-226 Eval. Support for HashLiteral.

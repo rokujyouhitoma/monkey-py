@@ -159,6 +159,7 @@ class TestEvaluator(unittest.TestCase):
             ''', 'unknown operator: BOOLEAN + BOOLEAN'),
             Test('foobar', 'identifier not found: foobar'),
             Test('"Hello" - "World"', 'unknown operator: STRING - STRING'),
+            Test('{"name": "Monkey"}[fn(x) { x }];', 'unusable as hash key: FUNCTION'),
         ]
 
         for tt in tests:
@@ -356,6 +357,30 @@ class TestEvaluator(unittest.TestCase):
                 self.fail('no pair for given key in Pairs')
 
             testIntegerObject(self, pair.Value, expectedValue)
+
+    def test_hash_index_expressions(self):
+        @dataclass
+        class Test:
+            input: str
+            expected: Any
+
+        tests: List[Test] = [
+            Test('{"foo": 5}["foo"]', 5),
+            Test('{"foo": 5}["bar"]', None),
+            Test('let key = "foo"; {"foo": 5}[key]', 5),
+            Test('{}["foo"]', None),
+            Test('{5: 5}[5]', 5),
+            Test('{true: 5}[true]', 5),
+            Test('{false: 5}[false]', 5),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            integer = tt.expected
+            if integer:
+                testIntegerObject(self, evaluated, int(integer))
+            else:
+                testNullObject(self, evaluated)
 
 
 def testNullObject(self, obj: object.Object) -> bool:
