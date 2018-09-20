@@ -20,6 +20,7 @@
 
 ## 2018.09.20
 
+ - 4.6: P230-231 Suppot for puts builtin function.
  - 4.5.5: P226-229 Eval. Support for Hash.
 
 ## 2018.09.19

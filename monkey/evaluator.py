@@ -478,10 +478,18 @@ def builtin_push(args: List[object.Object]) -> object.Object:
     return object.Array(Elements=newElements)
 
 
+def builtin_puts(args: List[object.Object]) -> object.Object:
+    for arg in args:
+        print(arg.Inspect)
+
+    return NULL
+
+
 builtins: Dict[str, object.Builtin] = {
     'len': object.Builtin(Fn=builtin_len),
     'first': object.Builtin(Fn=builtin_first),
     'last': object.Builtin(Fn=builtin_last),
     'rest': object.Builtin(Fn=builtin_rest),
     'push': object.Builtin(Fn=builtin_push),
+    'puts': object.Builtin(Fn=builtin_puts),
 }

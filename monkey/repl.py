@@ -25,9 +25,7 @@ def Start() -> None:
             printParserErrors(p.Errors())
             continue
 
-        evaluated = evaluator.Eval(program, env)
-        if evaluated:
-            print(evaluated.Inspect)
+        evaluator.Eval(program, env)
 
 
 def printParserErrors(errors: List[str]) -> None:

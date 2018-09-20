@@ -20,9 +20,7 @@ def main() -> None:
                 for msg in p.Errors():
                     print('\t' + msg)
                 return
-            evaluated = evaluator.Eval(program, env)
-            if evaluated:
-                print(evaluated.Inspect)
+            evaluator.Eval(program, env)
     else:
         user = getpass.getuser()
         print('Hello {}! This is the Monkey programming language!\n'.format(user), end='')
