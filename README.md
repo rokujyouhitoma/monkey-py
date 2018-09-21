@@ -21,7 +21,7 @@
 
 ## 2018.09.21
 
- - A.4: P242-261 Macro Support for unquote(Program, ExpressionStatement, InfixExpression) builtin function.
+ - A.4: P242-261 Macro Support for unquote(Program, ExpressionStatement, InfixExpression, PrefixExpression, IndexExpression) builtin function.
  - A.3: P238-242 Macro. Support for quote builtin function.
 
 ## 2018.09.20

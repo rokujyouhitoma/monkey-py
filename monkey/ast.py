@@ -479,6 +479,18 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
             modified = Modify(node.Right, modifier)
             modified = cast(Expression, modified)
             node.Right = modified
+    elif type(node) == PrefixExpression:
+        node = cast(PrefixExpression, node)
+        if node.Right:
+            modified = Modify(node.Right, modifier)
+            modified = cast(Expression, modified)
+            node.Right = modified
+    elif type(node) == IndexExpression:
+        node = cast(IndexExpression, node)
+        if node.Left:
+            node.Left = cast(Expression, Modify(node.Left, modifier))
+        if node.Index:
+            node.Index = cast(Expression, Modify(node.Index, modifier))
 
     node = modifier(node)
     return node

@@ -52,6 +52,38 @@ class TestAst(unittest.TestCase):
                     ast.ExpressionStatement(
                         Token=token.Token(token.INT, 'Unknown'), ExpressionValue=two()),
                 ])),
+            Test(
+                ast.InfixExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Left=one(),
+                    Operator='+',
+                    Right=two()),
+                ast.InfixExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Left=two(),
+                    Operator='+',
+                    Right=two())),
+            Test(
+                ast.InfixExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Left=two(),
+                    Operator='+',
+                    Right=one()),
+                ast.InfixExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Left=two(),
+                    Operator='+',
+                    Right=two())),
+            Test(
+                ast.PrefixExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Operator='-', Right=one()),
+                ast.PrefixExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Operator='-', Right=two())),
+            Test(
+                ast.IndexExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=one(), Index=one()),
+                ast.IndexExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=two(), Index=two())),
         ]
 
         for tt in tests:
