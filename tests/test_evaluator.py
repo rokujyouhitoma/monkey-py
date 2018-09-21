@@ -383,6 +383,33 @@ class TestEvaluator(unittest.TestCase):
                 testNullObject(self, evaluated)
 
 
+class TestMacro(unittest.TestCase):
+    def test_quote(self):
+        @dataclass
+        class Test():
+            input: str
+            expected: str
+
+        tests: List[Test] = [
+            Test('quote(5)', '5'),
+            Test('quote(5 + 8)', '(5 + 8)'),
+            Test('quote(foobar)', 'foobar'),
+            Test('quote(foobar + barfoo)', '(foobar + barfoo)'),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            quote = evaluated
+            if not quote:
+                self.fail('expected *object.Quote. got=%s (%s)' % (evaluated, evaluated))
+
+            if quote.Node is None:
+                self.fail('quote.Node is nil')
+
+            if quote.Node.String() != tt.expected:
+                self.fail('not equal. got=%s, want=%s' % (quote.Node.String(), tt.expected))
+
+
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:
         self.fail('object is not NULL. got=%s (%s)' % (obj, obj))

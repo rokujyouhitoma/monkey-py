@@ -18,6 +18,10 @@
 
 # Histories
 
+## 2018.09.21
+
+ - A.3: P238-242 Macro. Support for quote builtin function.
+
 ## 2018.09.20
 
  - 4.6: P230-231 Suppot for puts builtin function.

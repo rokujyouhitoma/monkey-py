@@ -16,6 +16,7 @@ STRING_OBJ = 'STRING'
 BUILTIN_OBJ = 'BUILTIN'
 ARRAY_OBJ = 'ARRAY'
 HASH_OBJ = 'HASH'
+QUOTE_OBJ = 'QUOTE'
 
 
 @dataclass
@@ -251,6 +252,25 @@ def GetHashPair(hash: Hash, key: HashKey) -> Optional[HashPair]:
 
     hashKey, hashPair = list[0]
     return hashPair
+
+
+@dataclass
+class Quote(Object):
+    Node: ast.Node
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(QUOTE_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        out: List[str] = []
+
+        out.append('QUOTE(')
+        out.append(self.Node.String())
+        out.append(')')
+
+        return ''.join(out)
 
 
 BuiltinFunction = Callable[[List[Object]], Object]

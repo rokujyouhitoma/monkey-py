@@ -65,6 +65,8 @@ def Eval(node: Any, env: object.Environment) -> Optional[object.Object]:
         body = node.Body
         return object.Function(Parameters=params, Env=env, Body=body)
     elif type(node) == ast.CallExpression:
+        if node.Function.TokenLiteral() == 'quote':
+            return quote(node.Arguments[0])
         function = Eval(node.Function, env)
         if function:
             if isError(function):
@@ -356,6 +358,10 @@ def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[obje
         return builtin.Fn(args)
     else:
         return newError('not a function: %s', (fn.Type.TypeName, ))
+
+
+def quote(node: ast.Node) -> object.Object:
+    return object.Quote(Node=node)
 
 
 def extendFunctionEnv(fn: object.Function, args: List[object.Object]) -> object.Environment:
