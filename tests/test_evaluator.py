@@ -420,6 +420,10 @@ class TestMacro(unittest.TestCase):
             Test('quote(unquote(4 + 4))', '8'),
             Test('quote(8 + unquote(4 + 4))', '(8 + 8)'),
             Test('quote(unquote(4 + 4) + 8)', '(8 + 8)'),
+            Test('''let foobar = 8;
+            quote(foobar)''', 'foobar'),
+            Test('''let foobar = 8;
+            quote(unquote(foobar))''', '8'),
         ]
 
         for tt in tests:
