@@ -15,11 +15,13 @@
 # TODO
 
  - 4.5.4: Improvement of Dict[HashKey, HashPair] structure.
+ - A.4.1.2 Macro. Support for each Expression.
 
 # Histories
 
 ## 2018.09.21
 
+ - A.4: P242-261 Macro Support for unquote(Program, ExpressionStatement, InfixExpression) builtin function.
  - A.3: P238-242 Macro. Support for quote builtin function.
 
 ## 2018.09.20

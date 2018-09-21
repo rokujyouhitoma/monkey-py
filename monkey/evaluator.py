@@ -1,7 +1,7 @@
 import copy
 from typing import Any, Dict, List, Optional, Tuple, cast
 
-from monkey import ast, object
+from monkey import ast, object, token
 
 NULL = object.Null()
 TRUE = object.Boolean(Value=True)
@@ -66,7 +66,7 @@ def Eval(node: Any, env: object.Environment) -> Optional[object.Object]:
         return object.Function(Parameters=params, Env=env, Body=body)
     elif type(node) == ast.CallExpression:
         if node.Function.TokenLiteral() == 'quote':
-            return quote(node.Arguments[0])
+            return quote(node.Arguments[0], env)
         function = Eval(node.Function, env)
         if function:
             if isError(function):
@@ -360,8 +360,48 @@ def applyFunction(fn: object.Object, args: List[object.Object]) -> Optional[obje
         return newError('not a function: %s', (fn.Type.TypeName, ))
 
 
-def quote(node: ast.Node) -> object.Object:
+def quote(node: ast.Node, env: object.Environment) -> object.Object:
+    node = evalUnquoteCalls(node, env)
     return object.Quote(Node=node)
+
+
+def evalUnquoteCalls(quoted: ast.Node, env: object.Environment) -> ast.Node:
+    def x(node: ast.Node) -> ast.Node:
+        if not isUnquoteCall(node):
+            return node
+
+        call = node
+        if type(call) != ast.CallExpression:
+            return node
+
+        call = cast(ast.CallExpression, call)
+        if len(call.Arguments) != 1:
+            return node
+
+        unquoted = Eval(call.Arguments[0], env)
+        if not unquoted:
+            return node
+        return convertObjectToASTNode(unquoted)
+
+    return ast.Modify(quoted, x)
+
+
+def isUnquoteCall(node: ast.Node) -> bool:
+    callExpression = node
+    if type(callExpression) != ast.CallExpression:
+        return False
+
+    callExpression = cast(ast.CallExpression, callExpression)
+    return callExpression.Function.TokenLiteral() == 'unquote'
+
+
+def convertObjectToASTNode(obj: object.Object) -> ast.Node:
+    if type(obj) == object.Integer:
+        t = token.Token(Type=token.INT, Literal='%s' % obj.Value)
+        return ast.IntegerLiteral(Token=t, Value=obj.Value)
+    else:
+        # TODO: xxx
+        return ast.Node()
 
 
 def extendFunctionEnv(fn: object.Function, args: List[object.Object]) -> object.Environment:

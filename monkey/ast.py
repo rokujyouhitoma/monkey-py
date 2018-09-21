@@ -1,50 +1,35 @@
-from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple, cast
 
 from monkey import token
 
 
-class Node(metaclass=ABCMeta):
-    @abstractmethod
+class Node:
     def TokenLiteral(self) -> str:
         pass
 
-    @abstractmethod
     def String(self) -> str:
         pass
 
 
-class Statement(metaclass=ABCMeta):
-    @property
-    @abstractmethod
-    def node(self) -> Node:
-        pass
-
-    @abstractmethod
+class Statement(Node):
     def statementNode(self) -> None:
         pass
 
-    @abstractmethod
     def TokenLiteral(self) -> str:
         pass
 
-    @abstractmethod
     def String(self) -> str:
         pass
 
 
-class Expression(metaclass=ABCMeta):
-    @property
-    @abstractmethod
+class Expression(Node):
     def node(self) -> Node:
         pass
 
-    @abstractmethod
     def expressionNode(self) -> None:
         pass
 
-    @abstractmethod
     def String(self) -> str:
         pass
 
@@ -64,7 +49,7 @@ class Program(Node):
 
 
 @dataclass
-class Identifier(Node, Expression):
+class Identifier(Expression):
     Token: token.Token
     Value: str
 
@@ -83,7 +68,7 @@ class Identifier(Node, Expression):
 
 
 @dataclass
-class LetStatement(Node, Statement):
+class LetStatement(Statement):
     Token: token.Token
     Name: Identifier
     Value: Expression
@@ -113,7 +98,7 @@ class LetStatement(Node, Statement):
 
 
 @dataclass
-class ReturnStatement(Node, Statement):
+class ReturnStatement(Statement):
     Token: token.Token
     ReturnValue: Expression
 
@@ -140,7 +125,7 @@ class ReturnStatement(Node, Statement):
 
 
 @dataclass
-class ExpressionStatement(Node, Statement):
+class ExpressionStatement(Statement):
     Token: token.Token
     ExpressionValue: Optional[Expression]
 
@@ -162,7 +147,7 @@ class ExpressionStatement(Node, Statement):
 
 
 @dataclass
-class IntegerLiteral(Node, Expression):
+class IntegerLiteral(Expression):
     Token: token.Token
     Value: int
 
@@ -181,7 +166,7 @@ class IntegerLiteral(Node, Expression):
 
 
 @dataclass
-class PrefixExpression(Node, Expression):
+class PrefixExpression(Expression):
     Token: token.Token
     Operator: str
     Right: Optional[Expression]
@@ -207,7 +192,7 @@ class PrefixExpression(Node, Expression):
 
 
 @dataclass
-class InfixExpression(Node, Expression):
+class InfixExpression(Expression):
     Token: token.Token
     Left: Optional[Expression]
     Operator: str
@@ -236,7 +221,7 @@ class InfixExpression(Node, Expression):
 
 
 @dataclass
-class Boolean(Node, Expression):
+class Boolean(Expression):
     Token: token.Token
     Value: bool
 
@@ -255,7 +240,7 @@ class Boolean(Node, Expression):
 
 
 @dataclass
-class BlockStatement(Node, Expression):
+class BlockStatement(Statement):
     Token: token.Token
     Statements: List[Statement]
 
@@ -277,7 +262,7 @@ class BlockStatement(Node, Expression):
 
 
 @dataclass
-class IfExpression(Node, Expression):
+class IfExpression(Expression):
     Token: token.Token
     Condition: Expression
     Consequence: BlockStatement
@@ -306,7 +291,7 @@ class IfExpression(Node, Expression):
 
 
 @dataclass
-class FunctionLiteral(Node, Expression):
+class FunctionLiteral(Expression):
     Token: token.Token
     Parameters: List[Identifier]
     Body: BlockStatement
@@ -335,7 +320,7 @@ class FunctionLiteral(Node, Expression):
 
 
 @dataclass
-class CallExpression(Node, Expression):
+class CallExpression(Expression):
     Token: token.Token
     Function: Expression
     Arguments: List[Expression]
@@ -363,7 +348,7 @@ class CallExpression(Node, Expression):
 
 
 @dataclass
-class StringLiteral(Node, Expression):
+class StringLiteral(Expression):
     Token: token.Token
     Value: str
 
@@ -382,7 +367,7 @@ class StringLiteral(Node, Expression):
 
 
 @dataclass
-class ArrayLiteral(Node, Expression):
+class ArrayLiteral(Expression):
     Token: token.Token
     Elements: List[Expression]
 
@@ -411,7 +396,7 @@ class ArrayLiteral(Node, Expression):
 
 
 @dataclass
-class IndexExpression(Node, Expression):
+class IndexExpression(Expression):
     Token: token.Token
     Left: Expression
     Index: Expression
@@ -439,7 +424,7 @@ class IndexExpression(Node, Expression):
 
 
 @dataclass
-class HashLiteral(Node, Expression):
+class HashLiteral(Expression):
     Token: token.Token
     Pairs: List[Tuple[Expression, Expression]]
 
@@ -465,3 +450,35 @@ class HashLiteral(Node, Expression):
         out.append('}')
 
         return ''.join(out)
+
+
+ModifierFunc = Callable[[Node], Node]
+
+
+def Modify(node: Node, modifier: ModifierFunc) -> Node:
+    if type(node) == Program:
+        node = cast(Program, node)
+        for i, statement in enumerate(node.Statements):
+            value = Modify(statement, modifier)
+            value = cast(Statement, value)
+            node.Statements[i] = value
+    elif type(node) == ExpressionStatement:
+        node = cast(ExpressionStatement, node)
+        expression = node.ExpressionValue
+        if expression:
+            modified = Modify(expression, modifier)
+            modified = cast(Expression, modified)
+            node.ExpressionValue = modified
+    elif type(node) == InfixExpression:
+        node = cast(InfixExpression, node)
+        if node.Left:
+            modified = Modify(node.Left, modifier)
+            modified = cast(Expression, modified)
+            node.Left = modified
+        if node.Right:
+            modified = Modify(node.Right, modifier)
+            modified = cast(Expression, modified)
+            node.Right = modified
+
+    node = modifier(node)
+    return node

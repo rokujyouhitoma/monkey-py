@@ -409,6 +409,31 @@ class TestMacro(unittest.TestCase):
             if quote.Node.String() != tt.expected:
                 self.fail('not equal. got=%s, want=%s' % (quote.Node.String(), tt.expected))
 
+    def test_quote_unquote(self):
+        @dataclass
+        class Test():
+            input: str
+            expected: str
+
+        tests: List[Test] = [
+            Test('quote(unquote(4))', '4'),
+            Test('quote(unquote(4 + 4))', '8'),
+            Test('quote(8 + unquote(4 + 4))', '(8 + 8)'),
+            Test('quote(unquote(4 + 4) + 8)', '(8 + 8)'),
+        ]
+
+        for tt in tests:
+            evaluated = testEval(tt.input)
+            quote = evaluated
+            if not quote:
+                self.fail('expected *object.Quote. got=%s (%s)' % (evaluated, evaluated))
+
+            if quote.Node is None:
+                self.fail('quote.Node is nil')
+
+            if quote.Node.String() != tt.expected:
+                self.fail('not equal. got=%s, want=%s' % (quote.Node.String(), tt.expected))
+
 
 def testNullObject(self, obj: object.Object) -> bool:
     if obj != evaluator.NULL:
