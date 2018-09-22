@@ -19,6 +19,10 @@
 
 # Histories
 
+## 2018.09.22
+
+ - A.4: P242-261 Macro Support for unquote(IfExpression) builtin function.
+
 ## 2018.09.21
 
  - A.4: P242-261 Macro Support for unquote(Program, ExpressionStatement, InfixExpression, PrefixExpression, IndexExpression) builtin function.

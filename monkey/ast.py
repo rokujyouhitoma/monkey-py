@@ -491,6 +491,16 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
             node.Left = cast(Expression, Modify(node.Left, modifier))
         if node.Index:
             node.Index = cast(Expression, Modify(node.Index, modifier))
+    elif type(node) == IfExpression:
+        node = cast(IfExpression, node)
+        node.Condition = cast(Expression, Modify(node.Condition, modifier))
+        node.Consequence = cast(BlockStatement, Modify(node.Consequence, modifier))
+        if node.Alternative is not None:
+            node.Alternative = cast(BlockStatement, Modify(node.Alternative, modifier))
+    elif type(node) == BlockStatement:
+        node = cast(BlockStatement, node)
+        for i, _ in enumerate(node.Statements):
+            node.Statements[i] = cast(Statement, Modify(node.Statements[i], modifier))
 
     node = modifier(node)
     return node

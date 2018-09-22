@@ -75,10 +75,47 @@ class TestAst(unittest.TestCase):
                     Operator='+',
                     Right=two())),
             Test(
+                ast.IndexExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=one(), Index=one()),
+                ast.IndexExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=two(), Index=two())),
+            Test(
                 ast.PrefixExpression(
                     Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Operator='-', Right=one()),
                 ast.PrefixExpression(
                     Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Operator='-', Right=two())),
+            Test(
+                ast.IfExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Condition=one(),
+                    Consequence=ast.BlockStatement(
+                        Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                        Statements=[
+                            ast.ExpressionStatement(
+                                Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ExpressionValue=one())
+                        ]),
+                    Alternative=ast.BlockStatement(
+                        Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                        Statements=[
+                            ast.ExpressionStatement(
+                                Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ExpressionValue=one())
+                        ]),
+                ),
+                ast.IfExpression(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Condition=two(),
+                    Consequence=ast.BlockStatement(
+                        Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                        Statements=[
+                            ast.ExpressionStatement(
+                                Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ExpressionValue=two())
+                        ]),
+                    Alternative=ast.BlockStatement(
+                        Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                        Statements=[
+                            ast.ExpressionStatement(
+                                Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ExpressionValue=two())
+                        ]))),
             Test(
                 ast.IndexExpression(
                     Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=one(), Index=one()),
