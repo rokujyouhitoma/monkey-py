@@ -121,6 +121,9 @@ class TestAst(unittest.TestCase):
                     Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=one(), Index=one()),
                 ast.IndexExpression(
                     Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=two(), Index=two())),
+            Test(
+                ast.ReturnStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ReturnValue=one()),
+                ast.ReturnStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ReturnValue=two()))
         ]
 
         for tt in tests:

@@ -501,6 +501,9 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
         node = cast(BlockStatement, node)
         for i, _ in enumerate(node.Statements):
             node.Statements[i] = cast(Statement, Modify(node.Statements[i], modifier))
+    elif type(node) == ReturnStatement:
+        node = cast(ReturnStatement, node)
+        node.ReturnValue = cast(Expression, Modify(node.ReturnValue, modifier))
 
     node = modifier(node)
     return node
