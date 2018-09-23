@@ -123,7 +123,12 @@ class TestAst(unittest.TestCase):
                     Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Left=two(), Index=two())),
             Test(
                 ast.ReturnStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ReturnValue=one()),
-                ast.ReturnStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ReturnValue=two()))
+                ast.ReturnStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                                    ReturnValue=two())),
+            Test(
+                ast.LetStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Value=one(), Name=''),
+                ast.LetStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Value=two(), Name=''),
+            ),
         ]
 
         for tt in tests:

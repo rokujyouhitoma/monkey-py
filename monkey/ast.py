@@ -504,6 +504,9 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
     elif type(node) == ReturnStatement:
         node = cast(ReturnStatement, node)
         node.ReturnValue = cast(Expression, Modify(node.ReturnValue, modifier))
+    elif type(node) == LetStatement:
+        node = cast(LetStatement, node)
+        node.Value = cast(Expression, Modify(node.Value, modifier))
 
     node = modifier(node)
     return node

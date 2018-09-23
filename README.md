@@ -19,6 +19,10 @@
 
 # Histories
 
+## 2018.09.23
+ 
+ - A.4: P242-261 Macro Support for unquote(LetStatement) builtin function.
+
 ## 2018.09.22
 
  - A.4: P242-261 Macro Support for unquote(IfExpression, ReturnStatement) builtin function.
