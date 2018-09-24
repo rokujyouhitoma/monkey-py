@@ -459,32 +459,22 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
     if type(node) == Program:
         node = cast(Program, node)
         for i, statement in enumerate(node.Statements):
-            value = Modify(statement, modifier)
-            value = cast(Statement, value)
-            node.Statements[i] = value
+            node.Statements[i] = cast(Statement, Modify(statement, modifier))
     elif type(node) == ExpressionStatement:
         node = cast(ExpressionStatement, node)
         expression = node.ExpressionValue
         if expression:
-            modified = Modify(expression, modifier)
-            modified = cast(Expression, modified)
-            node.ExpressionValue = modified
+            node.ExpressionValue = cast(Expression, Modify(expression, modifier))
     elif type(node) == InfixExpression:
         node = cast(InfixExpression, node)
         if node.Left:
-            modified = Modify(node.Left, modifier)
-            modified = cast(Expression, modified)
-            node.Left = modified
+            node.Left = cast(Expression, Modify(node.Left, modifier))
         if node.Right:
-            modified = Modify(node.Right, modifier)
-            modified = cast(Expression, modified)
-            node.Right = modified
+            node.Right = cast(Expression, Modify(node.Right, modifier))
     elif type(node) == PrefixExpression:
         node = cast(PrefixExpression, node)
         if node.Right:
-            modified = Modify(node.Right, modifier)
-            modified = cast(Expression, modified)
-            node.Right = modified
+            node.Right = cast(Expression, Modify(node.Right, modifier))
     elif type(node) == IndexExpression:
         node = cast(IndexExpression, node)
         if node.Left:
@@ -499,7 +489,7 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
             node.Alternative = cast(BlockStatement, Modify(node.Alternative, modifier))
     elif type(node) == BlockStatement:
         node = cast(BlockStatement, node)
-        for i, _ in enumerate(node.Statements):
+        for i in range(0, len(node.Statements)):
             node.Statements[i] = cast(Statement, Modify(node.Statements[i], modifier))
     elif type(node) == ReturnStatement:
         node = cast(ReturnStatement, node)
