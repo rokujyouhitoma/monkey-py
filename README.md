@@ -21,7 +21,7 @@
 
 ## 2018.09.24
 
- - A.4: P242-261 Macro Support for unquote(FunctionLiteral) builtin function.
+ - A.4: P242-261 Macro Support for unquote(FunctionLiteral, ArrayLiteral) builtin function.
 
 ## 2018.09.23
  

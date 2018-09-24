@@ -512,6 +512,10 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
         for i in range(0, len(node.Parameters)):
             node.Parameters[i] = cast(Identifier, Modify(node.Parameters[i], modifier))
         node.Body = cast(BlockStatement, Modify(node.Body, modifier))
+    elif type(node) == ArrayLiteral:
+        node = cast(ArrayLiteral, node)
+        for i in range(0, len(node.Elements)):
+            node.Elements[i] = cast(Expression, Modify(node.Elements[i], modifier))
 
     node = modifier(node)
     return node

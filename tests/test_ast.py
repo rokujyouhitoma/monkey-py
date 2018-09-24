@@ -149,6 +149,12 @@ class TestAst(unittest.TestCase):
                                 Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ExpressionValue=two()),
                         ])),
             ),
+            Test(
+                ast.ArrayLiteral(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Elements=[one(), one()]),
+                ast.ArrayLiteral(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Elements=[two(), two()]),
+            ),
         ]
 
         for tt in tests:
