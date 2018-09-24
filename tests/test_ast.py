@@ -129,6 +129,26 @@ class TestAst(unittest.TestCase):
                 ast.LetStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Value=one(), Name=''),
                 ast.LetStatement(Token=token.Token(token.ILLEGAL, 'ILLEGAL'), Value=two(), Name=''),
             ),
+            Test(
+                ast.FunctionLiteral(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Parameters=[],
+                    Body=ast.BlockStatement(
+                        Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                        Statements=[
+                            ast.ExpressionStatement(
+                                Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ExpressionValue=one()),
+                        ])),
+                ast.FunctionLiteral(
+                    Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                    Parameters=[],
+                    Body=ast.BlockStatement(
+                        Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+                        Statements=[
+                            ast.ExpressionStatement(
+                                Token=token.Token(token.ILLEGAL, 'ILLEGAL'), ExpressionValue=two()),
+                        ])),
+            ),
         ]
 
         for tt in tests:

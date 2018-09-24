@@ -507,6 +507,11 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
     elif type(node) == LetStatement:
         node = cast(LetStatement, node)
         node.Value = cast(Expression, Modify(node.Value, modifier))
+    elif type(node) == FunctionLiteral:
+        node = cast(FunctionLiteral, node)
+        for i in range(0, len(node.Parameters)):
+            node.Parameters[i] = cast(Identifier, Modify(node.Parameters[i], modifier))
+        node.Body = cast(BlockStatement, Modify(node.Body, modifier))
 
     node = modifier(node)
     return node
