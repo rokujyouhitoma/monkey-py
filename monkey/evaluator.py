@@ -396,9 +396,16 @@ def isUnquoteCall(node: ast.Node) -> bool:
 
 
 def convertObjectToASTNode(obj: object.Object) -> ast.Node:
+    t: token.Token
     if type(obj) == object.Integer:
         t = token.Token(Type=token.INT, Literal='%s' % obj.Value)
         return ast.IntegerLiteral(Token=t, Value=obj.Value)
+    elif type(obj) == object.Boolean:
+        if obj.Value:
+            t = token.Token(Type=token.TRUE, Literal='true')
+        else:
+            t = token.Token(Type=token.FALSE, Literal='false')
+        return ast.Boolean(Token=t, Value=obj.Value)
     else:
         # TODO: xxx
         return ast.Node()

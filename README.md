@@ -20,6 +20,7 @@
 
 ## 2018.09.24
 
+ - A.4.2.1: P262-264 Macro Support for Boolean.
  - A.4: P242-261 Macro Support for unquote(HashLiteral) builtin function.
 
 ## 2018.09.24
