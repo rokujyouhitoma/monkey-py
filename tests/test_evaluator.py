@@ -426,6 +426,10 @@ class TestMacro(unittest.TestCase):
             quote(unquote(foobar))''', '8'),
             Test('quote(unquote(true))', 'true'),
             Test('quote(unquote(false))', 'false'),
+            Test('quote(unquote(quote(4 + 4)))', '(4 + 4)'),
+            Test(
+                '''let quotedInfixExpression = quote(4 + 4);
+            quote(unquote(4 + 4) + unquote(quotedInfixExpression))''', '(8 + (4 + 4))'),
         ]
 
         for tt in tests:

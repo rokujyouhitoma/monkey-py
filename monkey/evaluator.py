@@ -406,6 +406,9 @@ def convertObjectToASTNode(obj: object.Object) -> ast.Node:
         else:
             t = token.Token(Type=token.FALSE, Literal='false')
         return ast.Boolean(Token=t, Value=obj.Value)
+    elif type(obj) == object.Quote:
+        obj = cast(object.Quote, obj)
+        return obj.Node
     else:
         # TODO: xxx
         return ast.Node()

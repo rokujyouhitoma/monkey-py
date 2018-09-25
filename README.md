@@ -18,8 +18,9 @@
 
 # Histories
 
-## 2018.09.24
+## 2018.09.25
 
+ - A.4.2.2: P264-265 Macro Support for quote inner unquote.
  - A.4.2.1: P262-264 Macro Support for Boolean.
  - A.4: P242-261 Macro Support for unquote(HashLiteral) builtin function.
 
