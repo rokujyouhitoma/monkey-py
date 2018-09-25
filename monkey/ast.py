@@ -506,6 +506,14 @@ def Modify(node: Node, modifier: ModifierFunc) -> Node:
         node = cast(ArrayLiteral, node)
         for i in range(0, len(node.Elements)):
             node.Elements[i] = cast(Expression, Modify(node.Elements[i], modifier))
+    elif type(node) == HashLiteral:
+        node = cast(HashLiteral, node)
+        newPairs = []
+        for key, val in node.Pairs:
+            newKey = cast(Expression, Modify(key, modifier))
+            newVal = cast(Expression, Modify(val, modifier))
+            newPairs.append((newKey, newVal))
+        node.Pairs = newPairs
 
     node = modifier(node)
     return node

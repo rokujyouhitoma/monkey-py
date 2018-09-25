@@ -162,3 +162,20 @@ class TestAst(unittest.TestCase):
 
             if modified != tt.expected:
                 self.fail('not equal. got=%s, want=%s' % (modified, tt.expected))
+
+        hashLiteral = ast.HashLiteral(
+            Token=token.Token(token.ILLEGAL, 'ILLEGAL'),
+            Pairs=[
+                (one(), one()),
+                (one(), one()),
+            ],
+        )
+
+        ast.Modify(hashLiteral, turnOneIntoTwo)
+
+        for key, val in hashLiteral.Pairs:
+            if key.Value != 2:
+                self.fail('value is not %s, got=%s' % (2, key.Value))
+
+            if val.Value != 2:
+                self.fail('value is not %s, got=%s' % (2, val.Value))
