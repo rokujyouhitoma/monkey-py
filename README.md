@@ -18,6 +18,10 @@
 
 # Histories
 
+## 2018.09.26
+
+ - A.5.1 P267-268 Macro keyword.
+
 ## 2018.09.25
 
  - A.4.2.2: P264-265 Macro Support for quote inner unquote.

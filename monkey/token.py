@@ -55,6 +55,8 @@ RBRACKET = TokenType(TypeName=']')
 
 COLON = TokenType(TypeName=':')
 
+MACRO = TokenType(TypeName='MACRO')
+
 keywords: Dict[str, TokenType] = {
     'fn': FUNCTION,
     'let': LET,
@@ -63,6 +65,7 @@ keywords: Dict[str, TokenType] = {
     'if': IF,
     'else': ELSE,
     'return': RETURN,
+    'macro': MACRO,
 }
 
 
