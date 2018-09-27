@@ -18,6 +18,10 @@
 
 # Histories
 
+## 2018.09.27
+
+ - A.5.2 P268-272 Parser. Support for MacroLiteral
+
 ## 2018.09.26
 
  - A.5.1 P267-268 Macro keyword.

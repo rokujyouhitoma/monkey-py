@@ -556,6 +556,43 @@ return 993322;
 
             testFunc(value)
 
+    def test_macro_literal_parsing(self):
+        input = 'macro(x, y) { x + y; }'
+
+        lex = lexer.New(input)
+        p = parser.New(lex)
+        program = p.ParseProgram()
+        checkParserErrors(self, p)
+
+        if len(program.Statements) != 1:
+            self.fail('program.Statements does not contain %s statements. got=%s\n' %
+                      (1, len(program.Statements)))
+
+        stmt = program.Statements[0]
+        if not stmt:
+            self.fail('statement is not ast.ExpressionStatement. got=%s' % program.Statements[0])
+
+        macro = stmt.ExpressionValue
+        if not macro:
+            self.fail('stmt.Expression is not ast.MacroLiteral. got=%s' % stmt.ExpressionValue)
+
+        if len(macro.Parameters) != 2:
+            self.fail('macro literal parameters wrong. want 2, got=%s\n' % len(macro.Parameters))
+
+        testLiteralExpression(self, macro.Parameters[0], 'x')
+        testLiteralExpression(self, macro.Parameters[1], 'y')
+
+        if len(macro.Body.Statements) != 1:
+            self.fail(
+                'macro.Body.Statements has not 1 statements. got=%s\n' % len(macro.Body.Statements))
+
+        bodyStmt = macro.Body.Statements[0]
+        if not bodyStmt:
+            self.fail(
+                'macro body stmt is not ast.ExpressionStatement. got=%s' % macro.Body.Statements[0])
+
+        testInfixExpression(self, bodyStmt.ExpressionValue, 'x', '+', 'y')
+
 
 def testLetStatement(self, s: ast.Statement, name: str) -> bool:
     if s.TokenLiteral() != 'let':

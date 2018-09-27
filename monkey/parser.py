@@ -367,6 +367,19 @@ class Parser():
         hash = ast.HashLiteral(Token=self.curToken, Pairs=pairs)
         return hash
 
+    def parseMacroLiteral(self) -> Optional[ast.Expression]:
+        if not self.expectPeek(token.LPAREN):
+            return None
+
+        parameters = self.parseFunctionParameters()
+        if not self.expectPeek(token.LBRACE):
+            return None
+
+        body = self.parseBlockStatement()
+        lit = ast.MacroLiteral(Token=self.curToken, Parameters=parameters, Body=body)
+
+        return lit
+
     def curTokenIs(self, t: token.TokenType) -> bool:
         return self.curToken.Type == t
 
@@ -440,6 +453,7 @@ def New(lex: lexer.Lexer) -> Parser:
     p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
     p.registerPrefix(token.LBRACE, p.parseHashLiteral)
     p.registerInfix(token.LBRACKET, p.parseIndexExpression)
+    p.registerPrefix(token.MACRO, p.parseMacroLiteral)
     p.nextToken()
     p.nextToken()
     return p
