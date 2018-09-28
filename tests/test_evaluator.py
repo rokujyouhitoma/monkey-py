@@ -2,7 +2,7 @@ import unittest
 from dataclasses import dataclass
 from typing import Any, List
 
-from monkey import evaluator, lexer, object, parser
+from monkey import ast, evaluator, lexer, object, parser
 
 
 class TestEvaluator(unittest.TestCase):
@@ -443,6 +443,60 @@ class TestMacro(unittest.TestCase):
 
             if quote.Node.String() != tt.expected:
                 self.fail('not equal. got=%s, want=%s' % (quote.Node.String(), tt.expected))
+
+
+class TestDefineMacros(unittest.TestCase):
+    def test_define_macros(self):
+        input = '''
+        let number = 1;
+        let function = fn(x, y) { x + y };
+        let mymacro = macro(x, y) { x + y; };
+        '''
+
+        env = object.NewEnvironment()
+        program = testParseProgram(input)
+
+        evaluator.DefineMacros(program, env)
+
+        if len(program.Statements) != 2:
+            print(program.String())
+            self.fail('Wrong number of statements. got=%s' % len(program.Statements))
+
+        ok = env.Get('number')
+        if ok:
+            self.fail('number should not be defined')
+
+        ok = env.Get("function")
+        if ok:
+            self.fail('function should not be defined')
+
+        obj = env.Get("mymacro")
+        if not obj:
+            self.fail('macro not in environment.')
+
+        macro = obj
+        if not macro:
+            self.fail('object is not Macro. got=%s (%s)' % (obj, obj))
+
+        if len(macro.Parameters) != 2:
+            self.fail('Wrong number of macro parameters. got=%s' % len(macro.Parameters))
+
+        if macro.Parameters[0].String() != 'x':
+            self.fail('parameter is not \'x\'. got=%s' % macro.Parameters[0])
+
+        if macro.Parameters[1].String() != 'y':
+            self.fail('parameter is not \'y\'. got=%s' % macro.Parameters[1])
+
+        expectedBody = '(x + y)'
+
+        if macro.Body.String() != expectedBody:
+            self.fail('body is not %s. got=%s' % (expectedBody, macro.Body.String()))
+
+
+def testParseProgram(input: str) -> ast.Program:
+    lex = lexer.New(input)
+    p = parser.New(lex)
+    return p.ParseProgram()
 
 
 def testNullObject(self, obj: object.Object) -> bool:

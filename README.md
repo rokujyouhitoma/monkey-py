@@ -18,9 +18,13 @@
 
 # Histories
 
+## 2018.09.28
+
+ - A.5.3 P272-276 Eval. Support for DegineMacro.
+
 ## 2018.09.27
 
- - A.5.2 P268-272 Parser. Support for MacroLiteral
+ - A.5.2 P268-272 Parser. Support for MacroLiteral.
 
 ## 2018.09.26
 

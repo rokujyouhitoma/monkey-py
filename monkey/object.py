@@ -17,6 +17,7 @@ BUILTIN_OBJ = 'BUILTIN'
 ARRAY_OBJ = 'ARRAY'
 HASH_OBJ = 'HASH'
 QUOTE_OBJ = 'QUOTE'
+MACRO_OBJ = 'MACRO'
 
 
 @dataclass
@@ -314,3 +315,31 @@ def NewEnclosedEnvironment(outer: Environment) -> Environment:
     env = NewEnvironment()
     env.outer = outer
     return env
+
+
+@dataclass
+class Macro(Object):
+    Parameters: List[ast.Identifier]
+    Body: ast.BlockStatement
+    Env: Environment
+
+    @property
+    def Type(self) -> ObjectType:
+        return ObjectType(MACRO_OBJ)
+
+    @property
+    def Inspect(self) -> str:
+        out: List[str] = []
+
+        params: List[str] = []
+        for p in self.Parameters:
+            params.append(p.String())
+
+        out.append('macro')
+        out.append('(')
+        out.append(', '.join(params))
+        out.append(') {\n')
+        out.append(self.Body.String())
+        out.append('\n}')
+
+        return ''.join(out)

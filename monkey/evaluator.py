@@ -549,3 +549,41 @@ builtins: Dict[str, object.Builtin] = {
     'push': object.Builtin(Fn=builtin_push),
     'puts': object.Builtin(Fn=builtin_puts),
 }
+
+
+def DefineMacros(program: ast.Program, env: object.Environment) -> None:
+    definitions: List[int] = []
+
+    for i, statement in enumerate(program.Statements):
+        if isMacroDefinition(statement):
+            addMacro(statement, env)
+            definitions.append(i)
+
+    # TODO: Wrang Codes...
+    i = len(definitions) - 1
+    while (i >= 0):
+        definitionIndex = definitions[i]
+        program.Statements = program.Statements[:definitionIndex]
+        i = i - 1
+
+
+def isMacroDefinition(node: ast.Statement) -> bool:
+    if type(node) != ast.LetStatement:
+        return False
+    letStatement = cast(ast.LetStatement, node)
+
+    if type(letStatement.Value) != ast.MacroLiteral:
+        return False
+
+    return True
+
+
+def addMacro(stmt: ast.Statement, env: object.Environment) -> None:
+    letStatement = cast(ast.LetStatement, stmt)
+    macroLiteral = cast(ast.MacroLiteral, letStatement.Value)
+    macro = object.Macro(
+        Parameters=macroLiteral.Parameters,
+        Env=env,
+        Body=macroLiteral.Body,
+    )
+    env.Set(letStatement.Name.Value, macro)
