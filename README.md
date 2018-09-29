@@ -18,6 +18,10 @@
 
 # Histories
 
+## 2018.09.29
+
+ - A.5.4 P277-280 Eval. Support for Expand Macro.
+
 ## 2018.09.28
 
  - A.5.3 P272-276 Eval. Support for DegineMacro.

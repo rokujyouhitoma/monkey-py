@@ -493,6 +493,34 @@ class TestDefineMacros(unittest.TestCase):
             self.fail('body is not %s. got=%s' % (expectedBody, macro.Body.String()))
 
 
+class TestExpandMacros(unittest.TestCase):
+    def test_expand_macros(self):
+        @dataclass
+        class Test:
+            input: str
+            expected: str
+
+        tests: List[Test] = [
+            Test(
+                '''let infixExpression = macro() { quote(1 + 2); };
+            infixExpression();''', '(1 + 2)'),
+            Test(
+                '''let reverse = macro(a, b) { quote(unquote(b) - unquote(a)); };
+            reverse(2 + 2, 10 - 5);''', '(10 - 5) - (2 + 2)'),
+        ]
+
+        for tt in tests:
+            expected = testParseProgram(tt.expected)
+            program = testParseProgram(tt.input)
+
+            env = object.NewEnvironment()
+            evaluator.DefineMacros(program, env)
+            expanded = evaluator.ExpandMacros(program, env)
+
+            if expanded.String() != expected.String():
+                self.fail('not equal. want=%s, got=%s' % (expected.String(), expanded.String()))
+
+
 def testParseProgram(input: str) -> ast.Program:
     lex = lexer.New(input)
     p = parser.New(lex)

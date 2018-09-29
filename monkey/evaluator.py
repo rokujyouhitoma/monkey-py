@@ -563,7 +563,9 @@ def DefineMacros(program: ast.Program, env: object.Environment) -> None:
     i = len(definitions) - 1
     while (i >= 0):
         definitionIndex = definitions[i]
-        program.Statements = program.Statements[:definitionIndex]
+        statements = program.Statements[0:definitionIndex] + program.Statements[definitionIndex +
+                                                                                1:]
+        program.Statements = statements
         i = i - 1
 
 
@@ -587,3 +589,57 @@ def addMacro(stmt: ast.Statement, env: object.Environment) -> None:
         Body=macroLiteral.Body,
     )
     env.Set(letStatement.Name.Value, macro)
+
+
+def ExpandMacros(program: ast.Node, env: object.Environment) -> ast.Node:
+    def f(node: ast.Node) -> ast.Node:
+        if type(node) != ast.CallExpression:
+            return node
+        callExpression = cast(ast.CallExpression, node)
+        macro = isMacroCall(callExpression, env)
+        if not macro:
+            return node
+
+        args = quoteArgs(callExpression)
+        evalEnv = extendMacroEnv(macro, args)
+
+        evaluated = Eval(macro.Body, evalEnv)
+
+        if type(evaluated) != object.Quote:
+            print('we only support returning AST-nodes from macros')
+        quote = cast(object.Quote, evaluated)
+
+        return quote.Node
+
+    return ast.Modify(program, f)
+
+
+def isMacroCall(exp: ast.CallExpression, env: object.Environment) -> Optional[object.Macro]:
+    if type(exp.Function) != ast.Identifier:
+        return None
+    identifier = cast(ast.Identifier, exp.Function)
+
+    obj = env.Get(identifier.Value)
+    if not obj:
+        return None
+
+    if type(obj) != object.Macro:
+        return None
+    macro = cast(object.Macro, obj)
+
+    return macro
+
+
+def quoteArgs(exp: ast.CallExpression) -> List[object.Quote]:
+    args: List[object.Quote] = []
+    for a in exp.Arguments:
+        args.append(object.Quote(Node=a))
+    return args
+
+
+def extendMacroEnv(macro: object.Macro, args: List[object.Quote]) -> object.Environment:
+    extended = object.NewEnclosedEnvironment(macro.Env)
+    for paramIdx, param in enumerate(macro.Parameters):
+        extended.Set(param.Value, args[paramIdx])
+
+    return extended
