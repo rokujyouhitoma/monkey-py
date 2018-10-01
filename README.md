@@ -18,6 +18,10 @@
 
 # Histories
 
+## 2018.10.01
+
+ - A.6 P282-284 REPL support for macro.
+
 ## 2018.09.30
 
  - A.5.5 P280-282 Implements of unless macro.

@@ -7,6 +7,7 @@ PROMPT = '>> '
 
 def Start() -> None:
     env = object.NewEnvironment()
+    macroEnv = object.NewEnvironment()
     while True:
         try:
             line = input(PROMPT)
@@ -25,7 +26,10 @@ def Start() -> None:
             printParserErrors(p.Errors())
             continue
 
-        evaluator.Eval(program, env)
+        evaluator.DefineMacros(program, macroEnv)
+        expanded = evaluator.ExpandMacros(program, macroEnv)
+
+        evaluator.Eval(expanded, env)
 
 
 def printParserErrors(errors: List[str]) -> None:
